@@ -1,19 +1,137 @@
 [
   {
-    "id": "100c9593-0e98-4e06-b692-893892c506ed",
+    "id": "917f18c2-ad6d-46a0-bc63-e50fa3f6fec6",
     "type": "MEMBER_REGISTERED",
     "payload": {
-      "id": "73817fbb-863f-4b3b-b133-a1d1862e5623",
+      "id": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
       "name": "Jon Tiemann",
       "email": "jon.tiemann@gmail.com",
       "location": "Lörrach",
-      "bio": "Ich mag sprouts!",
-      "joinedAt": "2025-06-26T18:07:53.213Z",
+      "bio": "i like sprouts!",
+      "joinedAt": "2025-06-26T19:02:51.065Z",
       "reputation": 0
     },
     "memberId": null,
-    "timestamp": "2025-06-26T18:07:53.214Z",
+    "timestamp": "2025-06-26T19:02:51.065Z",
     "version": 1,
     "sequenceNumber": 1
+  },
+  {
+    "id": "8b538e44-598d-4d50-8278-bfcf443648f4",
+    "type": "MESSAGE_SENT",
+    "payload": {
+      "id": "7e791cd3-7815-4429-94a2-042d875e1e59",
+      "fromId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "content": "this ia 1 hour in or so",
+      "tradeId": null,
+      "timestamp": "2025-06-26T19:03:24.924Z",
+      "read": false
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2025-06-26T19:03:24.924Z",
+    "version": 1,
+    "sequenceNumber": 2
+  },
+  {
+    "id": "8e99938e-e812-4c10-a33d-21661a4542e9",
+    "type": "MEMBER_REGISTERED",
+    "payload": {
+      "id": "c551d105-1246-4706-a311-a2146f0ed7a7",
+      "name": "Brigitte Rau",
+      "email": "raube34@gmail.com",
+      "location": "Lörrach",
+      "bio": "likes sprouts too!",
+      "joinedAt": "2025-06-26T19:05:05.589Z",
+      "reputation": 0
+    },
+    "memberId": null,
+    "timestamp": "2025-06-26T19:05:05.589Z",
+    "version": 1,
+    "sequenceNumber": 3
+  },
+  {
+    "id": "473f5332-02f8-4a7f-bdef-aa2480795de9",
+    "type": "MESSAGE_SENT",
+    "payload": {
+      "id": "7f186c70-3cae-401e-b6ec-a211e7ca08d6",
+      "fromId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "content": "testing?",
+      "tradeId": null,
+      "timestamp": "2025-06-26T19:05:48.127Z",
+      "read": false
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2025-06-26T19:05:48.127Z",
+    "version": 1,
+    "sequenceNumber": 4
+  },
+  {
+    "id": "65a14e9b-090f-4916-a7e7-78cfefccee78",
+    "type": "MESSAGE_SENT",
+    "payload": {
+      "id": "56fe905d-aa70-407e-8ee4-ae51be7650bd",
+      "fromId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "toIds": [
+        "c551d105-1246-4706-a311-a2146f0ed7a7"
+      ],
+      "content": "hey there, first pass for ideas",
+      "tradeId": null,
+      "timestamp": "2025-06-26T19:17:04.439Z",
+      "readBy": []
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2025-06-26T19:17:04.440Z",
+    "version": 1,
+    "sequenceNumber": 5
+  },
+  {
+    "id": "702f91c9-3add-4860-9e1d-8d3000dfb9fa",
+    "type": "MESSAGE_READ",
+    "payload": {
+      "messageId": "56fe905d-aa70-407e-8ee4-ae51be7650bd",
+      "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7"
+    },
+    "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+    "timestamp": "2025-06-26T19:17:10.143Z",
+    "version": 1,
+    "sequenceNumber": 6
+  },
+  {
+    "id": "d511ca28-eb0a-47c3-9550-884f398adc3b",
+    "type": "PLANT_WANTED",
+    "payload": {
+      "id": "f49159c1-6d0e-4e3d-a01a-3c29fb2355c0",
+      "name": "Aloe",
+      "description": "bigger the better, thanks",
+      "category": "succulent",
+      "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "type": "wanted",
+      "status": "available",
+      "createdAt": "2025-06-26T19:18:13.144Z",
+      "images": []
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2025-06-26T19:18:13.144Z",
+    "version": 1,
+    "sequenceNumber": 7
+  },
+  {
+    "id": "9acfab7a-68ac-4f84-8205-4ab6f00a13e7",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "679c9e2f-d737-4b1f-b37b-706ca035c4af",
+      "name": "cannabis",
+      "description": "germinated, sprouted and ready to exchange",
+      "category": "other",
+      "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2025-06-26T20:14:51.043Z",
+      "images": []
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2025-06-26T20:14:51.047Z",
+    "version": 1,
+    "sequenceNumber": 8
   }
 ]

@@ -1,287 +1,602 @@
 # 🌱 The Plant Exchange
 
-A modern, event-driven web application for plant enthusiasts to share, trade, and connect with each other. Built with cutting-edge functional programming principles, reactive streams, and event sourcing architecture.
+A sophisticated, event-driven web application that connects plant enthusiasts worldwide. Built with cutting-edge reactive programming patterns, real-time messaging, and comprehensive notification systems to facilitate seamless plant trading and community building.
 
-## 🚀 Features
+## ✨ Key Features
 
-### Core Functionality
-- **Member Registration**: Join the community with profile creation
-- **Plant Listings**: Offer plants for trade or request specific plants
-- **Real-time Messaging**: Communicate with other members to arrange trades
-- **Live Updates**: Real-time UI updates using Server-Sent Events
-- **Advanced Search**: Filter and search through available plants
+### 🏘️ **Community Platform**
+- **Member Registration**: Create rich profiles with location and bio information
+- **Real-time Updates**: Live data synchronization across all connected clients
+- **Responsive Design**: Seamless experience across desktop, tablet, and mobile devices
+- **Connection Status**: Visual indicators for real-time connectivity
 
-### Technical Highlights
-- **Event-Driven Architecture**: All state changes captured as immutable events
-- **Reactive Streams**: Real-time data flow using RxJS observables
-- **Event Sourcing**: Complete audit trail with JSON persistence
-- **Functional Design**: Pure functions and immutable data structures using Ramda
-- **Modern UI**: Responsive design with smooth animations and real-time updates
-- **RESTful API**: Complete HTTP API for programmatic access
+### 🌿 **Plant Trading System**
+- **Dual Listing Types**: Offer plants for trade or request specific plants you're seeking
+- **Advanced Search**: Filter by plant type, category, and full-text search capabilities
+- **Plant Categories**: Houseplants, succulents, herbs, vegetables, flowers, trees, shrubs, and more
+- **Rich Descriptions**: Detailed plant information including care requirements and condition
+- **Instant Updates**: New listings appear immediately for all users
 
-## 🛠 Technology Stack
+### 💬 **Advanced Messaging System**
+- **Multi-recipient Support**: Send messages to multiple members simultaneously
+- **Real-time Notifications**: Instant alerts with unread message badges
+- **Read Status Tracking**: See which recipients have read your messages
+- **Auto-mark as Read**: Messages automatically marked when viewed
+- **Quick Reply**: One-click reply functionality from any plant listing
+- **Compose Interface**: Advanced message composition with recipient selection
+- **Message Threading**: Organized conversation history with timestamps
 
-### Backend
-- **Node.js** with Express.js framework
-- **RxJS** for reactive programming and stream management
-- **Ramda** for functional programming utilities
-- **Event Sourcing** with JSON file persistence
-- **Server-Sent Events** for real-time client updates
+### 🔔 **Notification System**
+- **Visual Badges**: Red notification badges showing unread message counts
+- **Real-time Alerts**: Instant pop-up notifications for new messages
+- **Status Indicators**: Clear visual distinction between read/unread messages
+- **Member-specific Tracking**: Individual notification counts per member
 
-### Frontend
-- **Vanilla JavaScript** with modern ES6+ features
-- **CSS Grid & Flexbox** for responsive layouts
-- **Event Source API** for real-time updates
-- **Progressive Web App** principles
+## 🏗️ Technical Architecture
 
-## 📦 Installation
+### **Event-Driven Design**
+Built on enterprise-grade patterns including **Event Sourcing** and **CQRS** (Command Query Responsibility Segregation), ensuring complete audit trails and scalable data management.
 
-### Prerequisites
+```
+User Actions → Commands → Events → Projections → Real-time UI Updates
+```
+
+### **Reactive Streams**
+Leverages **RxJS** observables for real-time data flow, providing instant updates across all connected clients without page refreshes.
+
+### **Functional Programming**
+Implements pure functions and immutable data structures using **Ramda**, ensuring predictable behavior and easier testing.
+
+### **Real-time Communication**
+Uses **Server-Sent Events (SSE)** for low-latency, real-time updates with automatic reconnection capabilities.
+
+## 🛠️ Technology Stack
+
+### **Backend Infrastructure**
+- **Node.js + Express**: Lightweight, fast server framework
+- **RxJS**: Reactive programming for stream management
+- **Ramda**: Functional programming utilities
+- **Event Sourcing**: JSON-based persistent event store
+- **Server-Sent Events**: Real-time client communication
+
+### **Frontend Technology**
+- **Modern JavaScript**: ES6+ features with class-based architecture
+- **CSS Grid & Flexbox**: Responsive layouts with smooth animations
+- **EventSource API**: Real-time server communication
+- **Progressive Enhancement**: Works without JavaScript enabled
+
+### **Data Management**
+- **Immutable Events**: Complete audit trail of all system changes
+- **Reactive Projections**: Real-time state management
+- **JSON Persistence**: File-based storage with easy backup/restore
+- **Automatic Recovery**: Event replay for state reconstruction
+
+## 🚀 Quick Start Guide
+
+### **Prerequisites**
 - Node.js 16.0.0 or higher
 - npm or yarn package manager
+- Modern web browser with EventSource support
 
-### Quick Start
+### **Installation**
 
-1. **Clone and Setup**
+1. **Create Project Structure**
 ```bash
-# Create project directory
 mkdir plant-exchange
 cd plant-exchange
+mkdir public
+```
 
-# Save the server code as server.js
-# Save the frontend code as public/index.html
-# Save the package.json
+2. **Set Up Files**
+```bash
+# Copy the server code and save as 'server.js'
+# Copy the frontend HTML and save as 'public/index.html'  
+# Copy the package.json configuration
+```
 
-# Install dependencies
+3. **Install Dependencies**
+```bash
 npm install
 ```
 
-2. **Project Structure**
-```
-plant-exchange/
-├── server.js              # Main server application
-├── package.json           # Dependencies and scripts
-├── events.json            # Event store (auto-created)
-├── public/
-│   └── index.html         # Frontend application
-└── README.md             # This file
-```
-
-3. **Start the Application**
+4. **Start the Application**
 ```bash
 # Development mode with auto-restart
 npm run dev
 
-# Production mode
+# Or production mode
 npm start
 ```
 
-4. **Access the Application**
+5. **Access the Platform**
 Open your browser to `http://localhost:3000`
 
-## 🏗 Architecture Overview
+### **First Steps After Installation**
 
-### Event-Driven Design
-The application follows CQRS (Command Query Responsibility Segregation) and Event Sourcing patterns:
+1. **Verify Connection**: Look for the "🟢 Connected" status in the top-right corner
+2. **Register as a Member**: Fill out the "Join the Community" form
+3. **Add Your First Plant**: Use the "Share Plants" panel to offer or request plants
+4. **Test Messaging**: Try the "📝 Compose" button to send a message
+5. **Browse Plants**: Use the search and filter features to explore listings
 
-```
-Commands → Events → State Projections → UI Updates
-```
+## 🎯 User Journey
 
-### Core Components
+### **Getting Started**
+1. **Join the Community**: Register with your name, email, location, and plant interests
+2. **Browse Available Plants**: Explore what community members are offering
+3. **List Your Plants**: Share plants you want to trade or request specific varieties
+4. **Connect with Members**: Send messages to coordinate exchanges
+5. **Build Relationships**: Develop your reputation within the plant community
 
-#### Event Store
-- Persists all domain events to JSON file
-- Provides event streaming capabilities
-- Ensures complete audit trail
+### **Advanced Features**
+- **Multi-member Messaging**: Coordinate group trades or discussions
+- **Real-time Notifications**: Stay informed of new messages and opportunities
+- **Search & Filter**: Find exactly what you're looking for quickly
+- **Status Tracking**: Monitor read receipts and message delivery
 
-#### State Projections
-- Reactive state management using RxJS
-- Real-time updates from event streams
-- Separate projections for different domain entities
+## 📡 API Reference
 
-#### Domain Services
-- Pure business logic functions
-- Command handlers for state mutations
-- Query handlers for data retrieval
-
-#### Web Layer
-- RESTful API endpoints
-- Server-Sent Events for real-time updates
-- Modern HTML5 frontend
-
-## 🔧 API Reference
-
-### Members
-- `POST /api/members` - Register new member
-- `GET /api/members` - Get all members
-
-### Plants
-- `POST /api/plants/offer` - Offer a plant for trade
-- `POST /api/plants/wanted` - Request a specific plant
-- `GET /api/plants` - Search and filter plants
-- `DELETE /api/plants/:id` - Remove a plant listing
-
-### Messages
-- `POST /api/messages` - Send a message
-- `GET /api/messages/:memberId` - Get messages for member
-
-### Real-time Updates
-- `GET /events` - Server-Sent Events stream
-
-### System Info
-- `GET /api/stats` - Application statistics
-
-## 🎯 Usage Examples
-
-### Register a New Member
+### **Member Management**
 ```javascript
-const member = await fetch('/api/members', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    name: 'Jane Doe',
-    email: 'jane@example.com',
-    location: 'Portland, OR',
-    bio: 'Passionate about rare houseplants!'
-  })
-});
+// Register new member
+POST /api/members
+{
+  "name": "Jane Doe",
+  "email": "jane@example.com", 
+  "location": "Portland, OR",
+  "bio": "Passionate about rare houseplants!"
+}
+
+// Get all members
+GET /api/members
 ```
 
-### Offer a Plant
+### **Plant Listings**
 ```javascript
-const plant = await fetch('/api/plants/offer', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    memberId: 'member-uuid',
-    name: 'Monstera Deliciosa',
-    category: 'houseplant',
-    description: 'Healthy 2-year-old plant with fenestrations'
-  })
-});
+// Offer a plant for trade
+POST /api/plants/offer
+{
+  "memberId": "uuid",
+  "name": "Monstera Deliciosa",
+  "category": "houseplant",
+  "description": "Healthy 2-year-old plant with fenestrations"
+}
+
+// Request a specific plant
+POST /api/plants/wanted
+{
+  "memberId": "uuid",
+  "name": "Variegated Pothos",
+  "category": "houseplant", 
+  "description": "Looking for a cutting or small plant"
+}
+
+// Search plants with filters
+GET /api/plants?type=offer&category=houseplant&search=monstera
 ```
 
-### Real-time Event Listening
+### **Messaging System**
 ```javascript
+// Send message to multiple recipients
+POST /api/messages
+{
+  "fromId": "sender-uuid",
+  "toIds": ["recipient1-uuid", "recipient2-uuid"],
+  "content": "Hello! I'm interested in your plant trade."
+}
+
+// Mark message as read
+POST /api/messages/:messageId/read
+{
+  "memberId": "reader-uuid"
+}
+
+// Get messages for member
+GET /api/messages/:memberId
+
+// Get unread messages and count
+GET /api/messages/:memberId/unread
+```
+
+### **Real-time Events**
+```javascript
+// Connect to event stream
 const eventSource = new EventSource('/events');
+
 eventSource.onmessage = (event) => {
   const data = JSON.parse(event.data);
-  console.log('Real-time update:', data);
+  
+  switch(data.type) {
+    case 'initial_state':
+      // Initial application state
+      break;
+    case 'members_updated':
+      // New member joined
+      break;
+    case 'plants_updated': 
+      // New plant listed
+      break;
+    case 'messages_updated':
+      // New message received
+      break;
+  }
 };
 ```
 
-## 🧪 Event Types
+## 🔄 Event System
 
-The system recognizes these domain events:
+The application recognizes these domain events:
 
-- `MEMBER_REGISTERED` - New member joins
-- `PLANT_OFFERED` - Plant available for trade
-- `PLANT_WANTED` - Member requests specific plant
-- `MESSAGE_SENT` - Communication between members
-- `TRADE_INITIATED` - Trade process begins
-- `TRADE_COMPLETED` - Successful plant exchange
-- `PLANT_REMOVED` - Plant listing removed
+| Event Type | Description | Payload |
+|------------|-------------|---------|
+| `MEMBER_REGISTERED` | New community member | Member profile data |
+| `PLANT_OFFERED` | Plant available for trade | Plant details |
+| `PLANT_WANTED` | Plant request posted | Wanted plant specs |
+| `MESSAGE_SENT` | Message delivered | Message content & recipients |
+| `MESSAGE_READ` | Message marked as read | Message & reader IDs |
+| `PLANT_REMOVED` | Plant listing removed | Plant ID |
 
-## 🔄 Reactive Streams
-
-The application uses RxJS for managing reactive data flow:
-
+### **Event Flow Example**
 ```javascript
-// Example: Real-time plant updates
+// User registers → MEMBER_REGISTERED event → 
+// State projection updates → Real-time UI refresh
+// → Notification to all connected clients
+```
+
+## 🧪 Reactive Programming Examples
+
+### **Real-time Plant Updates**
+```javascript
 const plants$ = eventStore.getEventStream().pipe(
   filter(event => event.type === 'PLANT_OFFERED'),
   map(event => event.payload),
-  scan((plants, newPlant) => [...plants, newPlant], [])
+  scan((plants, newPlant) => [...plants, newPlant], []),
+  shareReplay(1)
 );
+
+plants$.subscribe(plants => updatePlantsUI(plants));
 ```
 
-## 🎨 UI Features
-
-- **Responsive Design**: Works on desktop, tablet, and mobile
-- **Real-time Updates**: Live data without page refreshes
-- **Smooth Animations**: CSS transitions and transforms
-- **Connection Status**: Visual indicator for real-time connection
-- **Search & Filter**: Advanced plant discovery
-- **Modal Dialogs**: Intuitive user interactions
-
-## 🧩 Functional Programming
-
-The codebase extensively uses functional programming principles:
-
+### **Message Notifications**
 ```javascript
-// Example: Using Ramda for data transformations
+const unreadMessages$ = messages$.pipe(
+  map(messages => messages.filter(msg => 
+    msg.toIds.includes(currentUserId) && 
+    !msg.readBy.includes(currentUserId)
+  )),
+  map(unread => unread.length),
+  distinctUntilChanged()
+);
+
+unreadMessages$.subscribe(count => updateNotificationBadge(count));
+```
+
+### **Functional Data Transformations**
+```javascript
 const activeOffers = R.pipe(
-  R.filter(plant => plant.type === 'offer'),
-  R.filter(plant => plant.status === 'available'),
+  R.filter(R.propEq('type', 'offer')),
+  R.filter(R.propEq('status', 'available')),
   R.sortBy(R.prop('createdAt')),
-  R.reverse
+  R.reverse,
+  R.take(10)
 )(plants);
 ```
 
-## 🚦 Development Scripts
+## 🎨 UI/UX Features
 
-```bash
-# Start development server with auto-reload
-npm run dev
+### **Modern Design**
+- **Gradient Backgrounds**: Beautiful visual aesthetics
+- **Smooth Animations**: CSS transitions and transforms
+- **Card-based Layout**: Clean, organized information display
+- **Responsive Typography**: Scalable text across devices
 
-# Run tests
-npm test
+### **Interactive Elements**
+- **Hover Effects**: Engaging micro-interactions
+- **Loading States**: Visual feedback during operations
+- **Modal Dialogs**: Focused user interactions
+- **Tab Navigation**: Intuitive content organization
 
-# Run tests in watch mode
-npm run test:watch
+### **Accessibility**
+- **Keyboard Navigation**: Full accessibility support
+- **Screen Reader Friendly**: Semantic HTML structure
+- **High Contrast**: Clear visual distinction
+- **Focus Indicators**: Clear navigation cues
 
-# Lint code
-npm run lint
+## 📊 Monitoring & Analytics
 
-# Format code
-npm run format
+### **Built-in Metrics**
+```javascript
+GET /api/stats
+{
+  "totalMembers": 157,
+  "totalPlants": 89,
+  "plantsOffered": 62,
+  "plantsWanted": 27,
+  "totalMessages": 342,
+  "totalEvents": 1247
+}
 ```
 
-## 📊 Monitoring
-
-The application provides built-in monitoring through:
-
-- Event store metrics
-- Real-time connection status
-- Application statistics API
-- Console logging for development
+### **Performance Monitoring**
+- Event store size tracking
+- Real-time connection health
+- Message delivery rates
+- User engagement metrics
 
 ## 🔒 Security Considerations
 
-For production deployment, consider adding:
+### **Current Implementation**
+- Input sanitization on client and server
+- CORS configuration for development
+- Event validation and type checking
+- Rate limiting considerations documented
 
-- Authentication and authorization
-- Input validation and sanitization
-- Rate limiting
-- HTTPS encryption
-- Database persistence (PostgreSQL, MongoDB)
-- User session management
+### **Production Recommendations**
+- **Authentication**: JWT or session-based auth
+- **Authorization**: Role-based access control
+- **HTTPS**: SSL/TLS encryption
+- **Input Validation**: Server-side sanitization
+- **Rate Limiting**: API endpoint protection
+- **Database**: Migrate to PostgreSQL/MongoDB
+- **File Uploads**: Secure image handling for plant photos
+
+## 🚀 Deployment Guide
+
+### **Development**
+```bash
+npm run dev  # Auto-reload server
+```
+
+### **Production**
+```bash
+npm start    # Production server
+```
+
+### **Docker Deployment**
+```dockerfile
+FROM node:16-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+COPY . .
+EXPOSE 3000
+CMD ["npm", "start"]
+```
+
+### **Environment Variables**
+```bash
+PORT=3000
+NODE_ENV=production
+EVENT_STORE_PATH=./data/events.json
+```
+
+## 🧩 Extension Points
+
+### **Planned Enhancements**
+- **Image Uploads**: Plant photo support with image optimization
+- **Geolocation**: Distance-based matching for local trades
+- **Rating System**: Member reputation and feedback
+- **Payment Integration**: Paid plant exchanges via Stripe
+- **Mobile App**: React Native companion application
+- **AI Matching**: Machine learning for plant recommendations
+- **Calendar Integration**: Schedule trade meetings
+- **Social Features**: Plant care communities and forums
+
+### **Architecture Extensions**
+- **Microservices**: Split into domain-specific services
+- **Message Queues**: Redis/RabbitMQ for scalability
+- **Caching**: Redis for session and data caching
+- **CDN**: Static asset optimization
+- **Load Balancing**: Multi-instance deployment
+
+## 🛠️ Development Workflow
+
+### **Development Environment Setup**
+
+1. **Clone and Setup**
+```bash
+git clone <repository-url>
+cd plant-exchange
+npm install
+```
+
+2. **Development Server**
+```bash
+npm run dev  # Starts with nodemon for auto-restart
+```
+
+3. **File Structure**
+```
+plant-exchange/
+├── server.js              # Main application server
+├── package.json           # Dependencies and scripts
+├── events.json            # Event store (auto-created)
+├── public/
+│   └── index.html         # Frontend application
+├── README.md              # Documentation
+└── .gitignore             # Git ignore patterns
+```
+
+### **Development Best Practices**
+
+- **Event Sourcing**: All state changes must go through events
+- **Functional Programming**: Use pure functions and immutable data
+- **Real-time Updates**: Test with multiple browser tabs
+- **Error Handling**: Always provide user feedback for failures
+- **Console Logging**: Use browser developer tools for debugging
+
+### **Testing Your Changes**
+
+1. **Multi-tab Testing**: Open multiple browser tabs to test real-time features
+2. **Network Tab**: Monitor API calls and Server-Sent Events
+3. **Console Logs**: Check for errors and debug information
+4. **Event Store**: Inspect `events.json` to see stored events
+5. **State Validation**: Verify projections match event history
+
+### **Unit Tests**
+```bash
+npm test                    # Run all tests
+npm run test:watch         # Watch mode
+npm run test:coverage      # Coverage report
+```
+
+### **Integration Tests**
+- API endpoint testing
+- Event sourcing validation
+- Real-time messaging verification
+- Cross-browser compatibility
+
+### **End-to-End Tests**
+- Complete user journey testing
+- Multi-user interaction scenarios
+- Real-time synchronization validation
+
+## ⚠️ Known Limitations
+
+### **Current Constraints**
+
+#### **Data Persistence**
+- **File-based Storage**: Uses JSON files instead of database
+- **Single Server**: No clustering or load balancing
+- **Memory Usage**: All data loaded into memory on startup
+- **Backup**: Manual backup of `events.json` required
+
+#### **Security**
+- **No Authentication**: Anyone can register and post
+- **No Input Sanitization**: Potential XSS vulnerabilities
+- **No Rate Limiting**: API endpoints unprotected
+- **CORS Wide Open**: Development configuration only
+
+#### **Scalability**
+- **Single Instance**: Cannot run multiple server instances
+- **Memory Growth**: Event store grows indefinitely
+- **File Locking**: Concurrent writes may cause issues
+- **Client Limits**: SSE connections limited by server resources
+
+#### **Features**
+- **No Image Uploads**: Text-only plant descriptions
+- **No Geolocation**: Location is free-text only
+- **No User Verification**: Email addresses not validated
+- **No Trade Completion**: No workflow for finalizing exchanges
+
+### **Production Readiness Checklist**
+
+Before deploying to production, implement:
+
+- [ ] **Authentication System** (JWT, OAuth, or sessions)
+- [ ] **Database Migration** (PostgreSQL, MongoDB, or similar)
+- [ ] **Input Validation** (server-side sanitization)
+- [ ] **Rate Limiting** (API protection)
+- [ ] **HTTPS/TLS** (encrypted connections)
+- [ ] **Error Logging** (structured logging system)
+- [ ] **Backup Strategy** (automated database backups)
+- [ ] **Monitoring** (health checks and metrics)
+- [ ] **Load Balancing** (multiple server instances)
+- [ ] **CDN Integration** (static asset delivery)
+
+### **Workarounds for Current Limitations**
+
+#### **Multiple Environments**
+```bash
+# Run on different ports for testing
+PORT=3001 npm start  # Test instance
+PORT=3002 npm start  # Staging instance
+```
+
+#### **Data Backup**
+```bash
+# Backup event store
+cp events.json events-backup-$(date +%Y%m%d).json
+
+# Restore from backup
+cp events-backup-20241226.json events.json
+```
+
+#### **Memory Management**
+```bash
+# Monitor memory usage
+node --max-old-space-size=4096 server.js
+```
+
+## 🧪 Testing Strategy
+
+### **Manual Testing**
+```bash
+# Start development server
+npm run dev
+
+# Test in multiple browser tabs
+# 1. Register different members in each tab
+# 2. Post plants from different members
+# 3. Send messages between members
+# 4. Verify real-time updates across tabs
+```
+
+### **API Testing**
+```bash
+# Test member registration
+curl -X POST http://localhost:3000/api/members \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Test User","email":"test@example.com","location":"Test City"}'
+
+# Test plant posting
+curl -X POST http://localhost:3000/api/plants/offer \
+  -H "Content-Type: application/json" \
+  -d '{"memberId":"uuid","name":"Test Plant","category":"houseplant","description":"Test description"}'
+```
+
+### **Event Store Testing**
+```bash
+# View current events
+cat events.json | jq '.'
+
+# Count events by type
+cat events.json | jq -r '.[].type' | sort | uniq -c
+```
 
 ## 🤝 Contributing
 
+### **Development Setup**
 1. Fork the repository
-2. Create a feature branch
-3. Make your changes following functional programming principles
-4. Add tests for new functionality
-5. Submit a pull request
+2. Create feature branch: `git checkout -b feature/amazing-feature`
+3. Follow functional programming principles
+4. Add comprehensive tests
+5. Submit pull request with detailed description
+
+### **Code Standards**
+- **Functional Programming**: Pure functions and immutable data
+- **Event Sourcing**: All state changes as events
+- **Reactive Patterns**: Observable streams for data flow
+- **Modern JavaScript**: ES6+ features with clear documentation
 
 ## 📄 License
 
-MIT License - see LICENSE file for details
+MIT License - Open source and free to use, modify, and distribute.
 
-## 🌟 Future Enhancements
+## 🌟 Success Metrics
 
-- **Image Upload**: Plant photos
-- **Geolocation**: Distance-based matching
-- **Rating System**: Member reputation
-- **Advanced Search**: AI-powered plant matching
-- **Mobile App**: React Native companion
-- **Payment Integration**: Paid plant exchanges
-- **Social Features**: Plant care communities
+### **Community Growth**
+- Monthly active members
+- Plant listings created
+- Successful trade completions
+- Message exchange volume
+
+### **Technical Performance**
+- Real-time update latency < 100ms
+- 99.9% uptime target
+- Event processing throughput
+- Client synchronization accuracy
 
 ---
 
-Built with ❤️ by the Plant Exchange Community
+**Built with ❤️ by the Plant Exchange Community**
 
-*Happy Growing! 🌱*
+*Connect. Share. Grow. Together.* 🌱
+
+### Support & Community
+- 📧 **Email**: support@plantexchange.com
+- 💬 **Discord**: Join our plant community
+- 🐛 **Issues**: GitHub issue tracker
+- 📖 **Docs**: Complete API documentation
+
+*Happy Growing! 🌿*

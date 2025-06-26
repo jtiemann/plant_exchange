@@ -18,6 +18,7 @@ const EventTypes = {
   PLANT_OFFERED: 'PLANT_OFFERED',
   PLANT_WANTED: 'PLANT_WANTED',
   MESSAGE_SENT: 'MESSAGE_SENT',
+  MESSAGE_READ: 'MESSAGE_READ',
   TRADE_INITIATED: 'TRADE_INITIATED',
   TRADE_COMPLETED: 'TRADE_COMPLETED',
   PLANT_REMOVED: 'PLANT_REMOVED'
@@ -55,14 +56,14 @@ const createPlant = (name, description, category, memberId, type = 'offer') => (
   images: []
 });
 
-const createMessage = (fromId, toId, content, tradeId = null) => ({
+const createMessage = (fromId, toIds, content, tradeId = null) => ({
   id: uuidv4(),
   fromId,
-  toId,
+  toIds: Array.isArray(toIds) ? toIds : [toIds], // Support multiple recipients
   content,
   tradeId,
   timestamp: new Date().toISOString(),
-  read: false
+  readBy: [] // Track who has read the message
 });
 
 // =============================================================================
@@ -168,10 +169,29 @@ class StateProjections {
 
     // Messages projection
     events$.pipe(
-      filter(event => event.type === EventTypes.MESSAGE_SENT),
+      filter(event => [EventTypes.MESSAGE_SENT, EventTypes.MESSAGE_READ].includes(event.type)),
       scan((messages, event) => {
         const newMessages = new Map(messages);
-        newMessages.set(event.payload.id, event.payload);
+        
+        switch (event.type) {
+          case EventTypes.MESSAGE_SENT:
+            newMessages.set(event.payload.id, event.payload);
+            break;
+          case EventTypes.MESSAGE_READ:
+            const message = newMessages.get(event.payload.messageId);
+            if (message) {
+              const existingReadBy = message.readBy || [];
+              if (!existingReadBy.includes(event.payload.memberId)) {
+                const updatedMessage = {
+                  ...message,
+                  readBy: [...existingReadBy, event.payload.memberId]
+                };
+                newMessages.set(event.payload.messageId, updatedMessage);
+              }
+            }
+            break;
+        }
+        
         return newMessages;
       }, new Map())
     ).subscribe(this.messages$);
@@ -213,7 +233,17 @@ class StateProjections {
       R.map(event => [event.payload.id, event.payload]),
       R.fromPairs
     )(events);
-    this.messages$.next(new Map(Object.entries(messages)));
+    
+    // Apply message read events
+    const readEvents = R.filter(event => event.type === EventTypes.MESSAGE_READ, events);
+    const updatedMessages = R.map(message => {
+      const messageReadEvents = R.filter(event => event.payload.messageId === message.id, readEvents);
+      const readBy = R.map(event => event.payload.memberId, messageReadEvents);
+      const existingReadBy = message.readBy || [];
+      return { ...message, readBy: R.uniq([...existingReadBy, ...readBy]) };
+    }, messages);
+    
+    this.messages$.next(new Map(Object.entries(updatedMessages)));
   }
 
   // Reactive getters
@@ -287,14 +317,33 @@ class PlantExchangeService {
   }
 
   async sendMessage(messageData) {
+    // Support both old (toId) and new (toIds) formats for compatibility
+    let toIds;
+    if (messageData.toIds) {
+      toIds = Array.isArray(messageData.toIds) ? messageData.toIds : [messageData.toIds];
+    } else if (messageData.toId) {
+      toIds = [messageData.toId];
+    } else {
+      throw new Error('No recipients specified');
+    }
+
     const message = createMessage(
       messageData.fromId,
-      messageData.toId,
+      toIds,
       messageData.content,
       messageData.tradeId
     );
 
     const event = createEvent(EventTypes.MESSAGE_SENT, message, messageData.fromId);
+    return await this.eventStore.append(event);
+  }
+
+  async markMessageAsRead(messageId, memberId) {
+    const event = createEvent(
+      EventTypes.MESSAGE_READ,
+      { messageId, memberId },
+      memberId
+    );
     return await this.eventStore.append(event);
   }
 
@@ -331,7 +380,40 @@ class PlantExchangeService {
     const currentMessages = Array.from(this.projections.messages$.value.values());
     
     return R.pipe(
-      R.filter(message => message.fromId === memberId || message.toId === memberId),
+      R.filter(message => {
+        // Handle both old format (toId) and new format (toIds)
+        const recipients = message.toIds || (message.toId ? [message.toId] : []);
+        return message.fromId === memberId || recipients.includes(memberId);
+      }),
+      R.sortBy(R.prop('timestamp')),
+      R.reverse
+    )(currentMessages);
+  }
+
+  getUnreadMessageCount(memberId) {
+    const currentMessages = Array.from(this.projections.messages$.value.values());
+    
+    return R.pipe(
+      R.filter(message => {
+        // Handle both old format (toId) and new format (toIds)
+        const recipients = message.toIds || (message.toId ? [message.toId] : []);
+        const readBy = message.readBy || [];
+        return recipients.includes(memberId) && !readBy.includes(memberId);
+      }),
+      R.length
+    )(currentMessages);
+  }
+
+  getUnreadMessagesForMember(memberId) {
+    const currentMessages = Array.from(this.projections.messages$.value.values());
+    
+    return R.pipe(
+      R.filter(message => {
+        // Handle both old format (toId) and new format (toIds)
+        const recipients = message.toIds || (message.toId ? [message.toId] : []);
+        const readBy = message.readBy || [];
+        return recipients.includes(memberId) && !readBy.includes(memberId);
+      }),
       R.sortBy(R.prop('timestamp')),
       R.reverse
     )(currentMessages);
@@ -495,9 +577,34 @@ class PlantExchangeServer {
       }
     });
 
+    this.app.post('/api/messages/:messageId/read', async (req, res) => {
+      try {
+        const { messageId } = req.params;
+        const { memberId } = req.body;
+        const event = await this.service.markMessageAsRead(messageId, memberId);
+        res.json({ success: true, event });
+      } catch (error) {
+        res.status(400).json({ error: error.message });
+      }
+    });
+
     this.app.get('/api/messages/:memberId', (req, res) => {
       const messages = this.service.getMemberMessages(req.params.memberId);
       res.json(messages);
+    });
+
+    this.app.get('/api/messages/:memberId/unread', (req, res) => {
+      const unreadMessages = this.service.getUnreadMessagesForMember(req.params.memberId);
+      const unreadCount = this.service.getUnreadMessageCount(req.params.memberId);
+      res.json({ 
+        messages: unreadMessages, 
+        count: unreadCount 
+      });
+    });
+
+    this.app.get('/api/notifications/:memberId', (req, res) => {
+      const unreadCount = this.service.getUnreadMessageCount(req.params.memberId);
+      res.json({ unreadMessages: unreadCount });
     });
 
     // System info

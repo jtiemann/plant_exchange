@@ -288,23 +288,92 @@
             line-height: 1.4;
         }
 
-        .notification {
-            position: fixed;
-            top: 80px;
-            right: 20px;
-            background: #28a745;
+        .notification-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #dc3545;
             color: white;
-            padding: 15px 20px;
-            border-radius: 8px;
-            z-index: 1001;
-            opacity: 0;
-            transform: translateX(100%);
-            transition: all 0.3s ease;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
         }
 
-        .notification.show {
-            opacity: 1;
-            transform: translateX(0);
+        .messages-header {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .member-selector-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .multi-select {
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            padding: 10px;
+            min-height: 100px;
+            max-height: 150px;
+            overflow-y: auto;
+            background: white;
+        }
+
+        .member-option {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .member-option:last-child {
+            border-bottom: none;
+        }
+
+        .member-option input[type="checkbox"] {
+            margin-right: 10px;
+            width: auto;
+        }
+
+        .member-option label {
+            margin: 0;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .selected-count {
+            color: #667eea;
+            font-weight: 600;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+
+        .message.unread {
+            border-left-color: #dc3545;
+            background: #fff5f5;
+        }
+
+        .message-status {
+            font-size: 0.8em;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        .read-indicator {
+            color: #28a745;
+        }
+
+        .unread-indicator {
+            color: #dc3545;
+            font-weight: bold;
         }
 
         .modal {
@@ -478,16 +547,49 @@
 
         <!-- Messages Panel -->
         <div class="panel messages-panel">
-            <h2>💬 Messages</h2>
-            <div class="form-group">
-                <label for="messagesMember">View messages for:</label>
-                <select id="messagesMember">
-                    <option value="">Select a member</option>
-                </select>
+            <div class="messages-header">
+                <h2>💬 Messages</h2>
+                <div class="member-selector-container">
+                    <select id="messagesMember">
+                        <option value="">Select a member</option>
+                    </select>
+                    <span class="notification-badge" id="messagesBadge" style="display: none;">0</span>
+                </div>
+                <button class="btn" onclick="app.openComposeModal()">📝 Compose</button>
             </div>
             <div id="messagesContainer">
                 <p style="text-align: center; color: #666; margin: 40px 0;">Select a member to view messages</p>
             </div>
+        </div>
+    </div>
+
+    <!-- Compose Message Modal -->
+    <div class="modal" id="composeModal">
+        <div class="modal-content">
+            <h3>📝 Compose Message</h3>
+            <form id="composeForm">
+                <div class="form-group">
+                    <label for="composeFrom">From:</label>
+                    <select id="composeFrom" required>
+                        <option value="">Select your profile</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>To (select one or more members):</label>
+                    <div class="selected-count" id="selectedCount">No members selected</div>
+                    <div class="multi-select" id="recipientSelect">
+                        <!-- Recipients will be loaded here -->
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="composeContent">Message:</label>
+                    <textarea id="composeContent" rows="4" placeholder="Type your message..." required></textarea>
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" class="btn btn-secondary" onclick="closeComposeModal()">Cancel</button>
+                    <button type="submit" class="btn">Send Message</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -516,7 +618,7 @@
     </div>
 
     <!-- Notification -->
-    <div class="notification" id="notification"></div>
+    <div id="notification"></div>
 
     <script>
         // Application State and Event Handling
@@ -529,7 +631,10 @@
                     messages: [],
                     currentFilter: 'all',
                     currentTab: 'offer',
-                    searchTerm: ''
+                    searchTerm: '',
+                    selectedRecipients: new Set(),
+                    currentMemberId: null,
+                    notifications: {}
                 };
                 
                 this.initializeEventSource();
@@ -610,7 +715,8 @@
                     
                     case 'messages_updated':
                         this.state.messages = data.data || [];
-                        this.renderMessages();
+                        this.renderMessages(this.state.currentMemberId);
+                        this.updateNotificationBadges();
                         break;
                 }
             }
@@ -627,7 +733,17 @@
                         this.showNotification('Plant request posted!', 'success');
                         break;
                     case 'MESSAGE_SENT':
-                        this.showNotification('Message sent!', 'success');
+                        const message = event.payload;
+                        // Show notification for recipients
+                        if (this.state.currentMemberId && message.toIds.includes(this.state.currentMemberId)) {
+                            const fromMember = this.state.members.find(m => m.id === message.fromId);
+                            this.showNotification(`New message from ${fromMember ? fromMember.name : 'Unknown'}`, 'info');
+                        } else {
+                            this.showNotification('Message sent!', 'success');
+                        }
+                        break;
+                    case 'MESSAGE_READ':
+                        // Silently update read status
                         break;
                     case 'PLANT_REMOVED':
                         this.showNotification('Plant removed!', 'info');
@@ -652,6 +768,12 @@
                 document.getElementById('plantForm').addEventListener('submit', (e) => {
                     e.preventDefault();
                     this.submitPlant();
+                });
+
+                // Compose form
+                document.getElementById('composeForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.sendComposeMessage();
                 });
 
                 // Message form
@@ -682,7 +804,11 @@
 
                 // Messages member selector
                 document.getElementById('messagesMember').addEventListener('change', (e) => {
+                    this.state.currentMemberId = e.target.value;
                     this.renderMessages(e.target.value);
+                    if (e.target.value) {
+                        this.markMessagesAsRead(e.target.value);
+                    }
                 });
             }
 
@@ -739,11 +865,32 @@
                 }
             }
 
-            async sendMessage() {
+            async sendComposeMessage() {
+                const selectedRecipients = Array.from(this.state.selectedRecipients);
+                const fromId = document.getElementById('composeFrom').value;
+                const content = document.getElementById('composeContent').value;
+                
+                console.log('Sending compose message:', { fromId, selectedRecipients, content });
+                
+                if (!fromId) {
+                    this.showNotification('Please select your profile', 'error');
+                    return;
+                }
+                
+                if (selectedRecipients.length === 0) {
+                    this.showNotification('Please select at least one recipient', 'error');
+                    return;
+                }
+                
+                if (!content.trim()) {
+                    this.showNotification('Please enter a message', 'error');
+                    return;
+                }
+
                 const formData = {
-                    fromId: document.getElementById('messageFrom').value,
-                    toId: document.getElementById('messageToId').value,
-                    content: document.getElementById('messageContent').value
+                    fromId: fromId,
+                    toIds: selectedRecipients,
+                    content: content.trim()
                 };
 
                 try {
@@ -753,14 +900,93 @@
                         body: JSON.stringify(formData)
                     });
 
+                    const result = await response.json();
+                    console.log('Message send response:', result);
+
+                    if (response.ok) {
+                        document.getElementById('composeForm').reset();
+                        this.state.selectedRecipients.clear();
+                        this.closeComposeModal();
+                        this.updateRecipientDisplay();
+                        this.showNotification('Message sent successfully!', 'success');
+                    } else {
+                        throw new Error(result.error || 'Failed to send message');
+                    }
+                } catch (error) {
+                    console.error('Failed to send message:', error);
+                    this.showNotification(`Failed to send message: ${error.message}`, 'error');
+                }
+            }
+
+            async sendMessage() {
+                const fromId = document.getElementById('messageFrom').value;
+                const toId = document.getElementById('messageToId').value;
+                const content = document.getElementById('messageContent').value;
+                
+                console.log('Sending single message:', { fromId, toId, content });
+                
+                if (!fromId) {
+                    this.showNotification('Please select your profile', 'error');
+                    return;
+                }
+                
+                if (!toId) {
+                    this.showNotification('Recipient not specified', 'error');
+                    return;
+                }
+                
+                if (!content.trim()) {
+                    this.showNotification('Please enter a message', 'error');
+                    return;
+                }
+
+                const formData = {
+                    fromId: fromId,
+                    toIds: [toId], // Use toIds format for consistency
+                    content: content.trim()
+                };
+
+                try {
+                    const response = await fetch('/api/messages', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(formData)
+                    });
+
+                    const result = await response.json();
+                    console.log('Message send response:', result);
+
                     if (response.ok) {
                         document.getElementById('messageForm').reset();
                         this.closeModal();
+                        this.showNotification('Message sent successfully!', 'success');
                     } else {
-                        throw new Error('Failed to send message');
+                        throw new Error(result.error || 'Failed to send message');
                     }
                 } catch (error) {
-                    this.showNotification('Failed to send message', 'error');
+                    console.error('Failed to send message:', error);
+                    this.showNotification(`Failed to send message: ${error.message}`, 'error');
+                }
+            }
+
+            async markMessagesAsRead(memberId) {
+                const unreadMessages = this.state.messages.filter(msg => {
+                    // Handle both old and new message formats
+                    const recipients = msg.toIds || (msg.toId ? [msg.toId] : []);
+                    const readBy = msg.readBy || [];
+                    return recipients.includes(memberId) && !readBy.includes(memberId);
+                });
+
+                for (const message of unreadMessages) {
+                    try {
+                        await fetch(`/api/messages/${message.id}/read`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ memberId })
+                        });
+                    } catch (error) {
+                        console.error('Failed to mark message as read:', error);
+                    }
                 }
             }
 
@@ -835,10 +1061,12 @@
             }
 
             updateMemberSelectors() {
-                const selectors = ['plantMember', 'messageFrom', 'messagesMember'];
+                const selectors = ['plantMember', 'messageFrom', 'messagesMember', 'composeFrom'];
                 
                 selectors.forEach(selectorId => {
                     const selector = document.getElementById(selectorId);
+                    if (!selector) return;
+                    
                     const currentValue = selector.value;
                     
                     // Clear existing options except the first
@@ -859,6 +1087,88 @@
                         selector.value = currentValue;
                     }
                 });
+
+                // Update recipient selector for compose modal
+                this.updateRecipientSelector();
+                this.updateNotificationBadges();
+            }
+
+            updateRecipientSelector() {
+                const container = document.getElementById('recipientSelect');
+                if (!container) return;
+
+                container.innerHTML = '';
+
+                this.state.members.forEach(member => {
+                    const memberOption = document.createElement('div');
+                    memberOption.className = 'member-option';
+                    
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.id = `recipient-${member.id}`;
+                    checkbox.value = member.id;
+                    checkbox.checked = this.state.selectedRecipients.has(member.id);
+                    
+                    checkbox.addEventListener('change', (e) => {
+                        if (e.target.checked) {
+                            this.state.selectedRecipients.add(member.id);
+                        } else {
+                            this.state.selectedRecipients.delete(member.id);
+                        }
+                        this.updateRecipientDisplay();
+                    });
+
+                    const label = document.createElement('label');
+                    label.htmlFor = `recipient-${member.id}`;
+                    label.textContent = `${member.name} (${member.location})`;
+
+                    memberOption.appendChild(checkbox);
+                    memberOption.appendChild(label);
+                    container.appendChild(memberOption);
+                });
+
+                this.updateRecipientDisplay();
+            }
+
+            updateRecipientDisplay() {
+                const countElement = document.getElementById('selectedCount');
+                if (!countElement) return;
+
+                const count = this.state.selectedRecipients.size;
+                if (count === 0) {
+                    countElement.textContent = 'No members selected';
+                } else if (count === 1) {
+                    countElement.textContent = '1 member selected';
+                } else {
+                    countElement.textContent = `${count} members selected`;
+                }
+            }
+
+            updateNotificationBadges() {
+                this.state.members.forEach(member => {
+                    const unreadCount = this.getUnreadCountForMember(member.id);
+                    this.state.notifications[member.id] = unreadCount;
+                });
+
+                // Update the messages badge for currently selected member
+                const selectedMemberId = document.getElementById('messagesMember').value;
+                const badge = document.getElementById('messagesBadge');
+                
+                if (selectedMemberId && this.state.notifications[selectedMemberId] > 0) {
+                    badge.textContent = this.state.notifications[selectedMemberId];
+                    badge.style.display = 'flex';
+                } else {
+                    badge.style.display = 'none';
+                }
+            }
+
+            getUnreadCountForMember(memberId) {
+                return this.state.messages.filter(msg => {
+                    // Handle both old and new message formats
+                    const recipients = msg.toIds || (msg.toId ? [msg.toId] : []);
+                    const readBy = msg.readBy || [];
+                    return recipients.includes(memberId) && !readBy.includes(memberId);
+                }).length;
             }
 
             renderPlants() {
@@ -925,10 +1235,12 @@
                     return;
                 }
                 
-                // Filter messages for the selected member
-                const memberMessages = this.state.messages.filter(msg => 
-                    msg.fromId === memberId || msg.toId === memberId
-                ).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                // Filter messages for the selected member - handle both old and new message formats
+                const memberMessages = this.state.messages.filter(msg => {
+                    // Handle old format (toId) and new format (toIds)
+                    const recipients = msg.toIds || (msg.toId ? [msg.toId] : []);
+                    return msg.fromId === memberId || recipients.includes(memberId);
+                }).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
                 
                 container.innerHTML = '';
                 
@@ -939,20 +1251,39 @@
                 
                 memberMessages.forEach(message => {
                     const fromMember = this.state.members.find(m => m.id === message.fromId);
-                    const toMember = this.state.members.find(m => m.id === message.toId);
+                    
+                    // Handle both old and new message formats
+                    const recipients = message.toIds || (message.toId ? [message.toId] : []);
+                    const toMembers = recipients.map(id => this.state.members.find(m => m.id === id)).filter(Boolean);
+                    
+                    const readBy = message.readBy || [];
+                    const isUnread = recipients.includes(memberId) && !readBy.includes(memberId);
+                    const isFromCurrentMember = message.fromId === memberId;
                     
                     const messageEl = document.createElement('div');
-                    messageEl.className = 'message fade-in';
+                    messageEl.className = `message fade-in ${isUnread ? 'unread' : ''}`;
+                    
+                    // Create recipient list
+                    const recipientNames = toMembers.length > 0 ? toMembers.map(m => m.name).join(', ') : 'Unknown';
+                    
                     messageEl.innerHTML = `
                         <div class="message-header">
                             <span><strong>From:</strong> ${fromMember ? fromMember.name : 'Unknown'}</span>
-                            <span><strong>To:</strong> ${toMember ? toMember.name : 'Unknown'}</span>
+                            <span><strong>To:</strong> ${recipientNames}</span>
                             <span>${new Date(message.timestamp).toLocaleString()}</span>
                         </div>
                         <div class="message-content">${message.content}</div>
+                        <div class="message-status">
+                            ${isUnread && !isFromCurrentMember ? '<span class="unread-indicator">● Unread</span>' : ''}
+                            ${readBy.length > 0 ? `<span class="read-indicator">✓ Read by ${readBy.length} recipient(s)</span>` : ''}
+                            ${!isFromCurrentMember ? '<button class="btn btn-secondary" onclick="app.openReplyModal(\'' + message.fromId + '\', \'' + (fromMember ? fromMember.name : 'Unknown') + '\')">Reply</button>' : ''}
+                        </div>
                     `;
                     container.appendChild(messageEl);
                 });
+                
+                // Update notification badge
+                this.updateNotificationBadges();
             }
 
             updateStats(stats = null) {
@@ -972,6 +1303,22 @@
                 document.getElementById('wantedCount').textContent = stats.plantsWanted || 0;
             }
 
+            openComposeModal() {
+                this.state.selectedRecipients.clear();
+                this.updateRecipientSelector();
+                document.getElementById('composeModal').classList.add('show');
+            }
+
+            closeComposeModal() {
+                document.getElementById('composeModal').classList.remove('show');
+                document.getElementById('composeForm').reset();
+                this.state.selectedRecipients.clear();
+            }
+
+            openReplyModal(toId, toName) {
+                this.openMessageModal(toId, toName);
+            }
+
             openMessageModal(toId, toName) {
                 document.getElementById('messageToId').value = toId;
                 document.querySelector('#messageModal h3').textContent = `Send Message to ${toName}`;
@@ -986,17 +1333,30 @@
             showNotification(message, type = 'success') {
                 const notification = document.getElementById('notification');
                 notification.textContent = message;
-                notification.className = `notification ${type}`;
-                notification.classList.add('show');
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 80px;
+                    right: 20px;
+                    background: ${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#17a2b8'};
+                    color: white;
+                    padding: 15px 20px;
+                    border-radius: 8px;
+                    z-index: 1001;
+                    opacity: 1;
+                    transform: translateX(0);
+                    transition: all 0.3s ease;
+                `;
                 
                 setTimeout(() => {
-                    notification.classList.remove('show');
+                    notification.style.opacity = '0';
+                    notification.style.transform = 'translateX(100%)';
                 }, 3000);
             }
         }
 
         // Global functions for event handlers
         window.closeModal = () => app.closeModal();
+        window.closeComposeModal = () => app.closeComposeModal();
 
         // Initialize the application
         const app = new PlantExchangeClient();
