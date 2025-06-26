@@ -1,0 +1,19 @@
+[
+  {
+    "id": "100c9593-0e98-4e06-b692-893892c506ed",
+    "type": "MEMBER_REGISTERED",
+    "payload": {
+      "id": "73817fbb-863f-4b3b-b133-a1d1862e5623",
+      "name": "Jon Tiemann",
+      "email": "jon.tiemann@gmail.com",
+      "location": "Lörrach",
+      "bio": "Ich mag sprouts!",
+      "joinedAt": "2025-06-26T18:07:53.213Z",
+      "reputation": 0
+    },
+    "memberId": null,
+    "timestamp": "2025-06-26T18:07:53.214Z",
+    "version": 1,
+    "sequenceNumber": 1
+  }
+]
