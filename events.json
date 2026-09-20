@@ -1385,5 +1385,68 @@
     "timestamp": "2026-09-20T16:14:01.474Z",
     "version": 1,
     "sequenceNumber": 73
+  },
+  {
+    "id": "1f8807bb-909a-4291-ada0-81ed4a28df27",
+    "type": "MESSAGE_SENT",
+    "payload": {
+      "id": "aa7b2055-9c44-408f-a5d9-17e504457aeb",
+      "fromId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "toIds": [
+        "c551d105-1246-4706-a311-a2146f0ed7a7"
+      ],
+      "content": "Hi Brigitte Rau, I saw your Golden Pothos and it looks like a good match for the Trailing plant for a shelf I'm after. Would you like to trade?",
+      "tradeId": null,
+      "timestamp": "2026-09-20T16:19:27.382Z",
+      "readBy": [],
+      "urgency": 1.84,
+      "tradeRelated": 0.52
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T16:19:27.382Z",
+    "version": 1,
+    "sequenceNumber": 74
+  },
+  {
+    "id": "b61314d7-3dae-47c6-8a9d-0c188c671cde",
+    "type": "MESSAGE_SENT",
+    "payload": {
+      "id": "616703b1-09f6-4fe0-8a1b-089685a60e62",
+      "fromId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "toIds": [
+        "c551d105-1246-4706-a311-a2146f0ed7a7"
+      ],
+      "content": "Hi Brigitte Rau, I saw your Golden Pothos and it looks like a good match for the Trailing plant for a shelf I'm after. Would you like to trade?",
+      "tradeId": "e03bdced-a226-48a3-8ed1-4e9bb6622913",
+      "timestamp": "2026-09-20T16:20:28.730Z",
+      "readBy": [],
+      "urgency": 1.85,
+      "tradeRelated": 0.99
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T16:20:29.347Z",
+    "version": 1,
+    "sequenceNumber": 75
+  },
+  {
+    "id": "f3fd3f9e-43ed-4192-b5cb-9590aa69149c",
+    "type": "MESSAGE_SENT",
+    "payload": {
+      "id": "2c2f2486-f62c-4165-9e8a-fce78b973def",
+      "fromId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "toIds": [
+        "c551d105-1246-4706-a311-a2146f0ed7a7"
+      ],
+      "content": "How often do you water your ferns in winter? Mine keep browning at the tips.",
+      "tradeId": null,
+      "timestamp": "2026-09-20T16:20:29.694Z",
+      "readBy": [],
+      "urgency": 1.84,
+      "tradeRelated": 0.01
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T16:20:29.694Z",
+    "version": 1,
+    "sequenceNumber": 76
   }
 ]

@@ -207,6 +207,13 @@ off a shelf... fine in a dim hallway"*), Burros Tail at 0.86, and String of Pear
 at 0.66 - demoted because it *"wants a sunny window"*, contradicting the request.
 The other 24 offers scored 0 and never reached the member.
 
+Each match in the UI carries its strength as a button. Clicking it opens the
+message modal already addressed between the two members - sender pre-set to the
+one who wants the plant, recipient to the one offering it - with a draft naming
+both listings. Only the trade id goes into the handler; names are resolved in
+JavaScript rather than interpolated into markup, so an apostrophe in a plant name
+cannot break the page.
+
 Matching runs **after** the HTTP response, so creating a listing stays fast and a
 matching failure can never cost a member their listing. The resulting trades reach
 the browser over SSE.
@@ -231,6 +238,14 @@ a Noul near 0.5 means "equally likely yes or no", not "medium urgency".
 Unread messages are ranked by urgency, falling back to recency for messages that
 predate triage. Measured on real messages: *"I need to cancel our trade tomorrow"*
 scored 2.00, a general question 1.48, and *"thanks, it worked!"* 0.00.
+
+**Criteria define the answer, not the instructions.** The first version of this
+question asked *"does this message propose, accept, decline, or arrange a trade?"*
+but described only *"arranging or settling"* in its criteria. Opening proposals
+landed near 0.5 and never linked, which looked like a model failure and was a
+question-design bug. Widening the criteria to cover a first approach moved the
+same message from 0.52 to 0.99. If a judgment reads as uncertain, check that the
+criteria cover every case the instructions name before touching a threshold.
 
 When the Noul says a message is about a trade, a **second request** asks which one,
 as a Choice over that member's open trades plus an explicit none option. It is a

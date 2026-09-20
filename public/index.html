@@ -197,12 +197,29 @@
             font-size: 0.72rem;
             text-transform: uppercase;
             letter-spacing: 0.04em;
-            padding: 2px 8px;
+            padding: 4px 10px;
             border-radius: 10px;
             background: #eceff1;
             color: #546e7a;
+            border: 1px solid transparent;
+            font-family: inherit;
+            cursor: pointer;
+            transition: background 0.15s, border-color 0.15s, transform 0.1s;
+        }
+        .match-strength:hover {
+            background: #dde3e7;
+            border-color: #b9c4cf;
+        }
+        .match-strength:active { transform: translateY(1px); }
+        .match-strength:focus-visible {
+            outline: 2px solid #5b6bbf;
+            outline-offset: 2px;
         }
         .match-card.notify .match-strength { background: #e3f4e9; color: #2e7d4f; }
+        .match-card.notify .match-strength:hover {
+            background: #cfeadb;
+            border-color: #2e9e5b;
+        }
         .category-hint {
             font-size: 0.8rem;
             margin-top: 5px;
@@ -1373,10 +1390,53 @@
                         </div>
                         <div class="match-meta">
                             <span>${memberName(trade.offerMemberId)} offers &middot; ${memberName(trade.wantedMemberId)} wants</span>
-                            <span class="match-strength">${trade.action === 'notify' ? 'strong match' : 'worth a look'}</span>
+                            <button type="button" class="match-strength"
+                                    title="Message ${memberName(trade.offerMemberId)} about this trade"
+                                    onclick="app.openTradeMessage('${trade.id}')">${trade.action === 'notify' ? 'strong match' : 'worth a look'}</button>
                         </div>
                     </div>
                 `).join('');
+            }
+
+            // Opens the message modal for a suggested trade. A match knows both
+            // sides, so the sender is pre-set to the member who wants the plant and
+            // the recipient to the one offering it. Only the trade id is passed -
+            // names are looked up here rather than interpolated into the onclick,
+            // so an apostrophe in a plant name cannot break the markup.
+            openTradeMessage(tradeId) {
+                const trade = this.state.trades.find(t => t.id === tradeId);
+                if (!trade) return;
+
+                const plantName = id => {
+                    const plant = this.state.plants.find(p => p.id === id);
+                    return plant ? plant.name : 'a listing that has since gone';
+                };
+                const memberName = id => {
+                    const member = this.state.members.find(m => m.id === id);
+                    return member ? member.name : 'there';
+                };
+
+                const offered = plantName(trade.offerId);
+                const sought = plantName(trade.wantedId);
+                const offerer = memberName(trade.offerMemberId);
+
+                // Pre-select the wanting member as sender where that profile exists;
+                // they can change it before sending.
+                const from = document.getElementById('messageFrom');
+                if (from && [...from.options].some(o => o.value === trade.wantedMemberId)) {
+                    from.value = trade.wantedMemberId;
+                }
+
+                this.openMessageModal(trade.offerMemberId, offerer);
+
+                // A draft, not a decision - the member edits or replaces it.
+                const content = document.getElementById('messageContent');
+                if (content && !content.value.trim()) {
+                    content.value =
+                        `Hi ${offerer}, I saw your ${offered} and it looks like a good match ` +
+                        `for the ${sought} I'm after. Would you like to trade?`;
+                }
+                if (content) content.focus();
             }
 
             // Asks the server to categorise the listing from its description, so
