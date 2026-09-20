@@ -2,6 +2,8 @@
 
 A sophisticated, event-driven web application that connects plant enthusiasts worldwide. Built with cutting-edge reactive programming patterns, real-time messaging, and comprehensive notification systems to facilitate seamless plant trading and community building.
 
+**Further reading:** [Architecture](docs/ARCHITECTURE.md) - how the event store, projections, and semantic search fit together. [Runbook](docs/RUNBOOK.md) - running, configuring, and troubleshooting it.
+
 ## ✨ Key Features
 
 ### 🏘️ **Community Platform**
@@ -12,7 +14,8 @@ A sophisticated, event-driven web application that connects plant enthusiasts wo
 
 ### 🌿 **Plant Trading System**
 - **Dual Listing Types**: Offer plants for trade or request specific plants you're seeking
-- **Advanced Search**: Filter by plant type, category, and full-text search capabilities
+- **Semantic Search**: Plain-language queries matched by meaning, not keywords - "something for a dark bathroom" finds the aloe. Powered by TypeSafe's Jev model; see [Architecture](docs/ARCHITECTURE.md#semantic-search)
+- **Filters**: Narrow by listing type (offer/wanted) and category before ranking
 - **Plant Categories**: Houseplants, succulents, herbs, vegetables, flowers, trees, shrubs, and more
 - **Rich Descriptions**: Detailed plant information including care requirements and condition
 - **Instant Updates**: New listings appear immediately for all users
@@ -58,6 +61,7 @@ Uses **Server-Sent Events (SSE)** for low-latency, real-time updates with automa
 - **Ramda**: Functional programming utilities
 - **Event Sourcing**: JSON-based persistent event store
 - **Server-Sent Events**: Real-time client communication
+- **TypeSafe (Jev)**: System One model returning typed judgments for semantic search
 
 ### **Frontend Technology**
 - **Modern JavaScript**: ES6+ features with class-based architecture
@@ -74,9 +78,10 @@ Uses **Server-Sent Events (SSE)** for low-latency, real-time updates with automa
 ## 🚀 Quick Start Guide
 
 ### **Prerequisites**
-- Node.js 16.0.0 or higher
+- Node.js 20.0.0 or higher (required by `@typesafe-ai/sdk`)
 - npm or yarn package manager
 - Modern web browser with EventSource support
+- A TypeSafe API key from [console.typesafe.ai](https://console.typesafe.ai) - optional; without it search degrades to substring matching
 
 ### **Installation**
 
@@ -99,7 +104,15 @@ mkdir public
 npm install
 ```
 
-4. **Start the Application**
+4. **Configure the API Key** (optional)
+```bash
+cp .env.example .env
+# Then edit .env and set TYPESAFE_API_KEY=<your key>
+```
+`.env` is gitignored. Skip this step and the app still runs - search falls back
+to substring matching and logs a warning at startup.
+
+5. **Start the Application**
 ```bash
 # Development mode with auto-restart
 npm run dev
@@ -108,7 +121,7 @@ npm run dev
 npm start
 ```
 
-5. **Access the Platform**
+6. **Access the Platform**
 Open your browser to `http://localhost:3000`
 
 ### **First Steps After Installation**
@@ -171,8 +184,15 @@ POST /api/plants/wanted
   "description": "Looking for a cutting or small plant"
 }
 
-// Search plants with filters
+// Search plants. type and category are exact filters applied in code;
+// search is ranked semantically by Jev.
 GET /api/plants?type=offer&category=houseplant&search=monstera
+
+// With ?search=, each result carries a relevance score in [0,1]:
+[ { "id": "...", "name": "Aloe", "category": "succulent", "relevance": 0.91 } ]
+
+// Returns [] when no listing plausibly matches, rather than the
+// least-irrelevant one. See docs/ARCHITECTURE.md#semantic-search.
 ```
 
 ### **Messaging System**
@@ -330,6 +350,8 @@ GET /api/stats
 - CORS configuration for development
 - Event validation and type checking
 - Rate limiting considerations documented
+- **API key stays server-side**: `TYPESAFE_API_KEY` is read only in `server.js`
+  and never sent to the browser. Search runs server-side for this reason.
 
 ### **Production Recommendations**
 - **Authentication**: JWT or session-based auth
@@ -354,7 +376,7 @@ npm start    # Production server
 
 ### **Docker Deployment**
 ```dockerfile
-FROM node:16-alpine
+FROM node:20-alpine
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci --only=production
@@ -364,11 +386,14 @@ CMD ["npm", "start"]
 ```
 
 ### **Environment Variables**
+
 ```bash
-PORT=3000
-NODE_ENV=production
-EVENT_STORE_PATH=./data/events.json
+TYPESAFE_API_KEY=   # TypeSafe/Jev key. Optional; absent = substring search.
 ```
+
+This is the only variable the code currently reads. The port (3000) and the
+event store path (`./events.json`) are defaults in `server.js` and are **not**
+yet configurable by environment - see [docs/RUNBOOK.md](docs/RUNBOOK.md#configuration).
 
 ## 🧩 Extension Points
 
@@ -378,7 +403,7 @@ EVENT_STORE_PATH=./data/events.json
 - **Rating System**: Member reputation and feedback
 - **Payment Integration**: Paid plant exchanges via Stripe
 - **Mobile App**: React Native companion application
-- **AI Matching**: Machine learning for plant recommendations
+- **AI Matching**: Offer/want pairing via Jev Score judgments (search already shipped; matching is next - see [Architecture](docs/ARCHITECTURE.md#planned-jev-work))
 - **Calendar Integration**: Schedule trade meetings
 - **Social Features**: Plant care communities and forums
 
