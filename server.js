@@ -1,13 +1,63 @@
 // The Plant Exchange - Event-Driven Plant Trading Platform
 // Modern architecture with RxJS, Ramda, Event Sourcing, and Reactive Streams
 
+// Jest sets NODE_ENV=test. Keep the loader's "injected env" line in normal runs -
+// docs/RUNBOOK.md tells operators to look for it - but silence it under test,
+// where it prints a stack trace per suite.
+require('dotenv').config({ quiet: process.env.NODE_ENV === 'test' });
+
 const express = require('express');
 const fs = require('fs').promises;
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 const R = require('ramda');
 const { Subject, BehaviorSubject, merge, fromEvent, timer } = require('rxjs');
-const { map, filter, scan, distinctUntilChanged, shareReplay, tap } = require('rxjs/operators');
+const { map, filter, distinctUntilChanged, shareReplay, tap } = require('rxjs/operators');
+
+// =============================================================================
+// CONFIGURATION
+// =============================================================================
+
+const TYPESAFE_API_KEY = process.env.TYPESAFE_API_KEY || '';
+
+const hasTypeSafeKey = () => TYPESAFE_API_KEY.length > 0;
+
+// Jev-backed features (semantic search, offer/want matching) need a TypeSafe key.
+// Call this at the top of any code path that talks to the API, so a missing key
+// surfaces as this message instead of an opaque 401 from the SDK.
+const requireTypeSafeKey = () => {
+  if (!hasTypeSafeKey()) {
+    throw new Error(
+      'TYPESAFE_API_KEY is not set. Copy .env.example to .env and add your key ' +
+      'from https://console.typesafe.ai, then restart the server.'
+    );
+  }
+  return TYPESAFE_API_KEY;
+};
+
+// =============================================================================
+// JEV-BACKED FEATURES
+// =============================================================================
+//
+// The model calls live in lib/judgments.js. What stays here is the workflow
+// around them: which records are eligible, when to call at all, and what to do
+// when the key is absent or the API fails.
+
+const judgments = require('./lib/judgments');
+
+// The same query over an unchanged catalogue is a free repeat.
+const SEARCH_CACHE_MAX = 200;
+const searchCache = new Map();
+
+const cacheKey = (query, plants) => `${query}\u0000${plants.map(p => p.id).join(',')}`;
+
+const cacheSearch = (key, results) => {
+  if (searchCache.size >= SEARCH_CACHE_MAX) {
+    searchCache.delete(searchCache.keys().next().value);
+  }
+  searchCache.set(key, results);
+  return results;
+};
 
 // =============================================================================
 // DOMAIN MODELS & TYPES
@@ -44,7 +94,17 @@ const createMember = (name, email, location, bio = '') => ({
   reputation: 0
 });
 
-const createPlant = (name, description, category, memberId, type = 'offer') => ({
+// Only http(s) URLs are kept, so a javascript: or data: URL can never reach an
+// <img src>. Returns an array because that is the shape `images` holds. Every
+// card draws a generated placeholder regardless, so a rejected or broken URL
+// never leaves a blank space.
+const imageList = value => {
+  const url = String(value || '').trim();
+  const scheme = url.slice(0, 8).toLowerCase();
+  return scheme.startsWith('http://') || scheme.startsWith('https://') ? [url] : [];
+};
+
+const createPlant = (name, description, category, memberId, type = 'offer', imageUrl = '') => ({
   id: uuidv4(),
   name,
   description,
@@ -53,7 +113,7 @@ const createPlant = (name, description, category, memberId, type = 'offer') => (
   type, // 'offer' or 'wanted'
   status: 'available',
   createdAt: new Date().toISOString(),
-  images: []
+  images: imageList(imageUrl)
 });
 
 const createMessage = (fromId, toIds, content, tradeId = null) => ({
@@ -64,6 +124,35 @@ const createMessage = (fromId, toIds, content, tradeId = null) => ({
   tradeId,
   timestamp: new Date().toISOString(),
   readBy: [] // Track who has read the message
+});
+
+// Who may be paired with whom is a rule, not a judgment: opposite sides of the
+// catalogue, different members, still available. Pure so it can be tested
+// without touching the API.
+const eligibleCounterparties = (plants, listing) => {
+  const opposite = listing.type === 'offer' ? 'wanted' : 'offer';
+  return plants.filter(other =>
+    other.type === opposite &&
+    other.memberId !== listing.memberId &&
+    other.status === 'available' &&
+    other.id !== listing.id
+  );
+};
+
+// A candidate pairing between an offer and a want, as judged by Jev. `action`
+// records which of the three things code may do with it: 'notify' means both
+// members should hear about it, 'suggest' means show it when they look.
+const createTrade = (offerId, wantedId, offerMemberId, wantedMemberId, action, score, confidence) => ({
+  id: uuidv4(),
+  offerId,
+  wantedId,
+  offerMemberId,
+  wantedMemberId,
+  action,
+  score,
+  confidence,
+  status: 'proposed',
+  createdAt: new Date().toISOString()
 });
 
 // =============================================================================
@@ -134,24 +223,29 @@ class StateProjections {
     this.setupProjections();
   }
 
+  // Each projection derives the next state from the BehaviorSubject's current
+  // value rather than a private accumulator. events$ is a plain Subject and does
+  // not replay history, so an accumulator seeded independently starts empty and
+  // its first emission would overwrite whatever rebuildFromHistory() had loaded,
+  // discarding every past event until the next restart.
   setupProjections() {
     const events$ = this.eventStore.getEventStream();
 
     // Members projection
     events$.pipe(
       filter(event => event.type === EventTypes.MEMBER_REGISTERED),
-      scan((members, event) => {
-        const newMembers = new Map(members);
+      map(event => {
+        const newMembers = new Map(this.members$.value);
         newMembers.set(event.payload.id, event.payload);
         return newMembers;
-      }, new Map())
+      })
     ).subscribe(this.members$);
 
     // Plants projection
     events$.pipe(
       filter(event => [EventTypes.PLANT_OFFERED, EventTypes.PLANT_WANTED, EventTypes.PLANT_REMOVED].includes(event.type)),
-      scan((plants, event) => {
-        const newPlants = new Map(plants);
+      map(event => {
+        const newPlants = new Map(this.plants$.value);
         
         switch (event.type) {
           case EventTypes.PLANT_OFFERED:
@@ -164,14 +258,35 @@ class StateProjections {
         }
         
         return newPlants;
-      }, new Map())
+      })
     ).subscribe(this.plants$);
+
+    // Trades projection
+    events$.pipe(
+      filter(event => [EventTypes.TRADE_INITIATED, EventTypes.TRADE_COMPLETED].includes(event.type)),
+      map(event => {
+        const newTrades = new Map(this.trades$.value);
+
+        switch (event.type) {
+          case EventTypes.TRADE_INITIATED:
+            newTrades.set(event.payload.id, event.payload);
+            break;
+          case EventTypes.TRADE_COMPLETED: {
+            const trade = newTrades.get(event.payload.tradeId);
+            if (trade) newTrades.set(trade.id, { ...trade, status: 'completed' });
+            break;
+          }
+        }
+
+        return newTrades;
+      })
+    ).subscribe(this.trades$);
 
     // Messages projection
     events$.pipe(
       filter(event => [EventTypes.MESSAGE_SENT, EventTypes.MESSAGE_READ].includes(event.type)),
-      scan((messages, event) => {
-        const newMessages = new Map(messages);
+      map(event => {
+        const newMessages = new Map(this.messages$.value);
         
         switch (event.type) {
           case EventTypes.MESSAGE_SENT:
@@ -193,7 +308,7 @@ class StateProjections {
         }
         
         return newMessages;
-      }, new Map())
+      })
     ).subscribe(this.messages$);
 
     // Initialize from existing events
@@ -227,6 +342,24 @@ class StateProjections {
     const activePlants = R.omit(removedPlants, plants);
     this.plants$.next(new Map(Object.entries(activePlants)));
 
+    // Rebuild trades
+    const trades = R.pipe(
+      R.filter(event => event.type === EventTypes.TRADE_INITIATED),
+      R.map(event => [event.payload.id, event.payload]),
+      R.fromPairs
+    )(events);
+
+    const completed = R.pipe(
+      R.filter(event => event.type === EventTypes.TRADE_COMPLETED),
+      R.map(event => event.payload.tradeId)
+    )(events);
+
+    const settledTrades = R.map(
+      trade => (completed.includes(trade.id) ? { ...trade, status: 'completed' } : trade),
+      trades
+    );
+    this.trades$.next(new Map(Object.entries(settledTrades)));
+
     // Rebuild messages
     const messages = R.pipe(
       R.filter(event => event.type === EventTypes.MESSAGE_SENT),
@@ -255,6 +388,10 @@ class StateProjections {
     return this.plants$.asObservable();
   }
 
+  getTrades() {
+    return this.trades$.asObservable();
+  }
+
   getMessages() {
     return this.messages$.asObservable();
   }
@@ -263,7 +400,8 @@ class StateProjections {
     return {
       members: Array.from(this.members$.value.values()),
       plants: Array.from(this.plants$.value.values()),
-      messages: Array.from(this.messages$.value.values())
+      messages: Array.from(this.messages$.value.values()),
+      trades: Array.from(this.trades$.value.values())
     };
   }
 }
@@ -296,7 +434,8 @@ class PlantExchangeService {
       plantData.description,
       plantData.category,
       memberId,
-      'offer'
+      'offer',
+      plantData.imageUrl
     );
 
     const event = createEvent(EventTypes.PLANT_OFFERED, plant, memberId);
@@ -309,7 +448,8 @@ class PlantExchangeService {
       plantData.description,
       plantData.category,
       memberId,
-      'wanted'
+      'wanted',
+      plantData.imageUrl
     );
 
     const event = createEvent(EventTypes.PLANT_WANTED, plant, memberId);
@@ -327,12 +467,39 @@ class PlantExchangeService {
       throw new Error('No recipients specified');
     }
 
+    // Two judgments over the message: whether it concerns a trade, and how much
+    // it needs a reply. Both are advisory - a failure must never block sending.
+    let triage = {};
+    if (hasTypeSafeKey()) {
+      try {
+        triage = await judgments.triageMessage(requireTypeSafeKey(), messageData.content);
+      } catch (error) {
+        console.error(`Message triage failed (${error.constructor.name}): ${error.message}`);
+      }
+    }
+
     const message = createMessage(
       messageData.fromId,
       toIds,
       messageData.content,
       messageData.tradeId
     );
+
+    if (triage.urgency !== undefined) {
+      message.urgency = triage.urgency;
+      message.tradeRelated = triage.tradeRelated;
+    }
+
+    // Only worth asking which trade once the Noul says there is one. The
+    // options are that member's open trades, so this cannot be folded into the
+    // triage request - it needs the earlier answer to know what to offer.
+    if (!message.tradeId && triage.isTradeMessage) {
+      try {
+        message.tradeId = await this.linkToTrade(messageData.content, message.fromId, toIds);
+      } catch (error) {
+        console.error(`Trade linking failed (${error.constructor.name}): ${error.message}`);
+      }
+    }
 
     const event = createEvent(EventTypes.MESSAGE_SENT, message, messageData.fromId);
     return await this.eventStore.append(event);
@@ -357,23 +524,121 @@ class PlantExchangeService {
   }
 
   // Query methods using functional composition
-  searchPlants(criteria) {
-    const currentPlants = Array.from(this.projections.plants$.value.values());
-    
+  // Open trades involving any of these members, with plant names resolved so
+  // the Choice options mean something.
+  async linkToTrade(content, fromId, toIds) {
+    const people = [fromId, ...toIds];
+    const plants = this.projections.plants$.value;
+
+    const open = Array.from(this.projections.trades$.value.values())
+      .filter(trade =>
+        trade.status === 'proposed' &&
+        (people.includes(trade.offerMemberId) || people.includes(trade.wantedMemberId))
+      )
+      .map(trade => ({
+        id: trade.id,
+        offerName: (plants.get(trade.offerId) || {}).name || 'an unknown plant',
+        wantedName: (plants.get(trade.wantedId) || {}).name || 'an unknown plant',
+      }));
+
+    if (!open.length) return null;
+
+    const link = await judgments.linkMessageToTrade(requireTypeSafeKey(), content, open);
+    return link ? link.tradeId : null;
+  }
+
+  // Pairs a newly created listing against the opposite side of the catalogue.
+  // Who may trade with whom is a rule, so code builds the candidate list; only
+  // "do these two needs meet" is a judgment.
+  //
+  // Runs after the listing is already persisted, so a failure here never costs
+  // the member their listing.
+  async matchNewListing(plant) {
+    if (!hasTypeSafeKey()) return [];
+
+    const candidates = eligibleCounterparties(
+      Array.from(this.projections.plants$.value.values()),
+      plant
+    );
+
+    if (!candidates.length) return [];
+
+    let matches;
+    try {
+      matches = await judgments.matchListings(requireTypeSafeKey(), plant, candidates);
+    } catch (error) {
+      console.error(`Matching failed (${error.constructor.name}): ${error.message}`);
+      return [];
+    }
+
+    const offered = plant.type === 'offer';
+    const events = [];
+    for (const match of matches) {
+      const trade = createTrade(
+        match.offerId,
+        match.wantedId,
+        offered ? plant.memberId : match.candidate.memberId,
+        offered ? match.candidate.memberId : plant.memberId,
+        match.action,
+        match.score,
+        match.confidence
+      );
+      events.push(await this.eventStore.append(
+        createEvent(EventTypes.TRADE_INITIATED, trade, plant.memberId)
+      ));
+    }
+
+    if (events.length) {
+      console.log(`Matched "${plant.name}" against ${candidates.length} candidate(s): ` +
+        matches.map(m => `${m.candidate.name} [${m.action}]`).join(', '));
+    }
+    return events;
+  }
+
+  // Category and spam ride in one request over the same state. Code decides
+  // whether the guess is confident enough to pre-fill; the member can override.
+  async classifyListing(name, description) {
+    if (!hasTypeSafeKey()) return { available: false };
+    const result = await judgments.classifyListing(requireTypeSafeKey(), name, description);
+    return { available: true, ...result };
+  }
+
+  getMemberTrades(memberId) {
     return R.pipe(
+      R.filter(trade => trade.offerMemberId === memberId || trade.wantedMemberId === memberId),
+      R.sortBy(R.prop('score')),
+      R.reverse
+    )(Array.from(this.projections.trades$.value.values()));
+  }
+
+  // Query methods using functional composition
+  async searchPlants(criteria) {
+    const currentPlants = Array.from(this.projections.plants$.value.values());
+
+    // Code owns the deterministic filters. The model only ever sees the shortlist.
+    const shortlist = R.pipe(
       R.filter(plant => {
         if (criteria.type && plant.type !== criteria.type) return false;
         if (criteria.category && plant.category !== criteria.category) return false;
-        if (criteria.search) {
-          const searchText = criteria.search.toLowerCase();
-          return plant.name.toLowerCase().includes(searchText) ||
-                 plant.description.toLowerCase().includes(searchText);
-        }
         return true;
       }),
       R.sortBy(R.prop('createdAt')),
       R.reverse
     )(currentPlants);
+
+    if (!criteria.search) return shortlist;
+    if (!hasTypeSafeKey()) return judgments.substringSearch(shortlist, criteria.search);
+
+    const key = cacheKey(criteria.search, shortlist);
+    if (searchCache.has(key)) return searchCache.get(key);
+
+    try {
+      return cacheSearch(key, await judgments.searchListings(requireTypeSafeKey(), shortlist, criteria.search));
+    } catch (error) {
+      console.error(`Semantic search failed (${error.constructor.name}): ${error.message}`);
+      console.error('   Falling back to substring matching for this query.');
+      return judgments.substringSearch(shortlist, criteria.search);
+    }
   }
 
   getMemberMessages(memberId) {
@@ -404,6 +669,8 @@ class PlantExchangeService {
     )(currentMessages);
   }
 
+  // Ranked by how much each message needs a reply, falling back to recency for
+  // messages sent before triage existed or while the key was absent.
   getUnreadMessagesForMember(memberId) {
     const currentMessages = Array.from(this.projections.messages$.value.values());
     
@@ -414,8 +681,12 @@ class PlantExchangeService {
         const readBy = message.readBy || [];
         return recipients.includes(memberId) && !readBy.includes(memberId);
       }),
-      R.sortBy(R.prop('timestamp')),
-      R.reverse
+      // Urgency first where triage ran, recency within the same band and for
+      // messages that predate it.
+      R.sortWith([
+        R.descend(message => message.urgency !== undefined ? message.urgency : -1),
+        R.descend(R.prop('timestamp'))
+      ])
     )(currentMessages);
   }
 }
@@ -471,6 +742,13 @@ class PlantExchangeServer {
       this.broadcastToSSEClients({
         type: 'plants_updated',
         data: Array.from(plants.values())
+      });
+    });
+
+    this.projections.getTrades().subscribe(trades => {
+      this.broadcastToSSEClients({
+        type: 'trades_updated',
+        data: Array.from(trades.values())
       });
     });
 
@@ -536,6 +814,8 @@ class PlantExchangeServer {
         const { memberId, ...plantData } = req.body;
         const event = await this.service.offerPlant(plantData, memberId);
         res.json({ success: true, event });
+        this.service.matchNewListing(event.payload).catch(error =>
+          console.error('Matching failed:', error.message));
       } catch (error) {
         res.status(400).json({ error: error.message });
       }
@@ -546,14 +826,36 @@ class PlantExchangeServer {
         const { memberId, ...plantData } = req.body;
         const event = await this.service.requestPlant(plantData, memberId);
         res.json({ success: true, event });
+        this.service.matchNewListing(event.payload).catch(error =>
+          console.error('Matching failed:', error.message));
       } catch (error) {
         res.status(400).json({ error: error.message });
       }
     });
 
-    this.app.get('/api/plants', (req, res) => {
-      const results = this.service.searchPlants(req.query);
-      res.json(results);
+    this.app.post('/api/plants/classify', async (req, res) => {
+      try {
+        const { name = '', description = '' } = req.body;
+        if (!name && !description) {
+          return res.status(400).json({ error: 'name or description required' });
+        }
+        res.json(await this.service.classifyListing(name, description));
+      } catch (error) {
+        res.status(500).json({ error: error.message });
+      }
+    });
+
+    this.app.get('/api/matches/:memberId', (req, res) => {
+      res.json(this.service.getMemberTrades(req.params.memberId));
+    });
+
+    this.app.get('/api/plants', async (req, res) => {
+      try {
+        const results = await this.service.searchPlants(req.query);
+        res.json(results);
+      } catch (error) {
+        res.status(500).json({ error: error.message });
+      }
     });
 
     this.app.delete('/api/plants/:plantId', async (req, res) => {
@@ -616,6 +918,7 @@ class PlantExchangeServer {
         plantsOffered: state.plants.filter(p => p.type === 'offer').length,
         plantsWanted: state.plants.filter(p => p.type === 'wanted').length,
         totalMessages: state.messages.length,
+        totalMatches: this.projections.trades$.value.size,
         totalEvents: this.eventStore.getEvents().length
       });
     });
@@ -632,6 +935,11 @@ class PlantExchangeServer {
     // Ensure projections are rebuilt from existing events
     this.projections.rebuildFromHistory();
     
+    if (!hasTypeSafeKey()) {
+      console.warn('⚠️  TYPESAFE_API_KEY is not set - Jev-backed features are disabled.');
+      console.warn('   Copy .env.example to .env and add your key to enable them.');
+    }
+
     this.app.listen(port, () => {
       console.log(`🌱 The Plant Exchange is running on http://localhost:${port}`);
       console.log(`📊 Event Store contains ${this.eventStore.getEvents().length} events`);
@@ -651,7 +959,7 @@ class PlantExchangeServer {
 
 if (require.main === module) {
   const server = new PlantExchangeServer();
-  server.start().catch(console.error);
+  server.start(Number(process.env.PORT) || 3000).catch(console.error);
 }
 
 module.exports = {
@@ -663,5 +971,10 @@ module.exports = {
   createEvent,
   createMember,
   createPlant,
-  createMessage
+  createMessage,
+  createTrade,
+  eligibleCounterparties,
+  imageList,
+  hasTypeSafeKey,
+  requireTypeSafeKey
 };

@@ -175,12 +175,118 @@
             margin-top: 20px;
         }
 
+        .match-card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            border-left: 4px solid #b9c4cf;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+        }
+        .match-card.notify { border-left-color: #2e9e5b; }
+        .match-pair { font-weight: 600; color: #2c3e50; }
+        .match-arrow { color: #7f8c8d; margin: 0 6px; }
+        .match-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 6px;
+            font-size: 0.82rem;
+            color: #7f8c8d;
+        }
+        .match-strength {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            padding: 4px 10px;
+            border-radius: 10px;
+            background: #eceff1;
+            color: #546e7a;
+            border: 1px solid transparent;
+            font-family: inherit;
+            cursor: pointer;
+            transition: background 0.15s, border-color 0.15s, transform 0.1s;
+        }
+        .match-strength:hover {
+            background: #dde3e7;
+            border-color: #b9c4cf;
+        }
+        .match-strength:active { transform: translateY(1px); }
+        .match-strength:focus-visible {
+            outline: 2px solid #5b6bbf;
+            outline-offset: 2px;
+        }
+        .match-card.notify .match-strength { background: #e3f4e9; color: #2e7d4f; }
+        .match-card.notify .match-strength:hover {
+            background: #cfeadb;
+            border-color: #2e9e5b;
+        }
+        .category-hint {
+            font-size: 0.8rem;
+            margin-top: 5px;
+            color: #2e7d4f;
+            min-height: 1.1em;
+        }
+        .category-hint.warn { color: #b3541e; }
+
         .plant-card {
             background: #f8f9fa;
             border-radius: 10px;
             padding: 15px;
             border-left: 4px solid #667eea;
             transition: transform 0.2s ease;
+            /* Let the browser skip layout and paint for cards that are not on
+               screen. contain-intrinsic-size keeps the scrollbar honest so this
+               costs no jumpiness. */
+            content-visibility: auto;
+            contain-intrinsic-size: auto 360px;
+        }
+
+        /* Fixed ratio means the card's height is known before any image data
+           arrives, so a photo loading later cannot shift the page. */
+        .plant-image {
+            position: relative;
+            /* A fixed height rather than a ratio: the card's height is then known
+               before anything loads at any card width, and 57 of them stay
+               scannable. Zero layout shift either way. */
+            height: 160px;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 12px;
+            background: linear-gradient(140deg,
+                hsl(var(--plant-hue) 42% 88%),
+                hsl(calc(var(--plant-hue) + 26) 38% 72%));
+        }
+        /* The generated glyph is inline SVG, so it paints with the card itself -
+           no request, no decode, nothing to wait for. */
+        .plant-glyph {
+            position: absolute;
+            inset: 18%;
+            display: block;
+            color: hsl(var(--plant-hue) 45% 34%);
+            opacity: 0.5;
+        }
+        .plant-photo {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        /* Only revealed once decode() resolves, so a half-painted image is never
+           shown on top of the placeholder. */
+        .plant-photo.ready { opacity: 1; }
+        .plant-initial {
+            position: absolute;
+            right: 10px;
+            bottom: 6px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: hsl(var(--plant-hue) 40% 30%);
+            opacity: 0.55;
         }
 
         .plant-card:hover {
@@ -523,6 +629,11 @@
                     <div class="form-group">
                         <label for="plantDescription">Description *</label>
                         <textarea id="plantDescription" rows="3" placeholder="Describe the plant, its condition, care requirements..." required></textarea>
+                        <div class="category-hint" id="categoryHint"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="plantImage">Photo URL (optional)</label>
+                        <input type="url" id="plantImage" placeholder="https://example.com/my-plant.jpg">
                     </div>
                     <button type="submit" class="btn" id="plantSubmitBtn">Offer Plant</button>
                 </form>
@@ -542,6 +653,17 @@
 
             <div class="plants-grid" id="plantsGrid">
                 <!-- Plants will be dynamically loaded here -->
+            </div>
+        </div>
+
+        <!-- Suggested Trades -->
+        <div class="panel">
+            <h2>🤝 Suggested Trades</h2>
+            <p style="color:#7f8c8d;font-size:0.86rem;margin:6px 0 14px;">
+                Offers paired with requests by meaning, not keywords. Green ones are strong enough to tell both members about.
+            </p>
+            <div id="matchesList">
+                <p style="text-align:center;color:#666;margin:24px 0;">No suggested trades yet. Add an offer or a request and they appear here.</p>
             </div>
         </div>
 
@@ -632,6 +754,9 @@
                     currentFilter: 'all',
                     currentTab: 'offer',
                     searchTerm: '',
+                    trades: [],
+                    searchResults: null,   // server-ranked hits, null = use local view
+                    searchPending: false,
                     selectedRecipients: new Set(),
                     currentMemberId: null,
                     notifications: {}
@@ -689,6 +814,7 @@
                         this.state.members = data.data.members || [];
                         this.state.plants = data.data.plants || [];
                         this.state.messages = data.data.messages || [];
+                        this.state.trades = data.data.trades || [];
                         console.log('Initial state loaded:', {
                             members: this.state.members.length,
                             plants: this.state.plants.length,
@@ -710,9 +836,15 @@
                     case 'plants_updated':
                         this.state.plants = data.data || [];
                         this.renderPlants();
+                        this.renderMatches();
                         this.updateStats();
                         break;
                     
+                    case 'trades_updated':
+                        this.state.trades = data.data || [];
+                        this.renderMatches();
+                        break;
+
                     case 'messages_updated':
                         this.state.messages = data.data || [];
                         this.renderMessages(this.state.currentMemberId);
@@ -796,10 +928,18 @@
                     });
                 });
 
+                // Category suggestion once the member stops typing the description
+                let categoryTimer;
+                document.getElementById('plantDescription').addEventListener('input', () => {
+                    clearTimeout(categoryTimer);
+                    categoryTimer = setTimeout(() => this.suggestCategory(), 600);
+                });
+
                 // Search box
                 document.getElementById('searchBox').addEventListener('input', (e) => {
                     this.state.searchTerm = e.target.value;
-                    this.renderPlants();
+                    this.renderPlants();          // instant substring pass
+                    this.scheduleSemanticSearch(); // ranked pass, debounced
                 });
 
                 // Messages member selector
@@ -843,7 +983,8 @@
                     memberId: document.getElementById('plantMember').value,
                     name: document.getElementById('plantName').value,
                     category: document.getElementById('plantCategory').value,
-                    description: document.getElementById('plantDescription').value
+                    description: document.getElementById('plantDescription').value,
+                    imageUrl: document.getElementById('plantImage').value
                 };
 
                 const endpoint = this.state.currentTab === 'offer' ? '/api/plants/offer' : '/api/plants/wanted';
@@ -1026,6 +1167,46 @@
                 document.querySelector(`[data-filter="${filter}"]`).classList.add('active');
                 
                 this.renderPlants();
+                if (this.state.searchTerm.trim()) this.scheduleSemanticSearch();
+            }
+
+            // Semantic search runs on the server, where the API key lives. The
+            // local substring filter stays as the instant pass so typing still
+            // feels immediate while the ranked results are in flight.
+            scheduleSemanticSearch() {
+                clearTimeout(this._searchTimer);
+                const term = this.state.searchTerm.trim();
+
+                if (!term) {
+                    this.state.searchResults = null;
+                    this.state.searchPending = false;
+                    this.renderPlants();
+                    return;
+                }
+
+                this.state.searchPending = true;
+                this._searchTimer = setTimeout(() => this.runSemanticSearch(term), 350);
+            }
+
+            async runSemanticSearch(term) {
+                const seq = (this._searchSeq = (this._searchSeq || 0) + 1);
+                const params = new URLSearchParams({ search: term });
+                if (this.state.currentFilter !== 'all') params.set('type', this.state.currentFilter);
+
+                try {
+                    const response = await fetch('/api/plants?' + params);
+                    if (!response.ok) throw new Error('search failed: ' + response.status);
+                    const results = await response.json();
+                    if (seq !== this._searchSeq) return;  // a newer search superseded this one
+                    this.state.searchResults = Array.isArray(results) ? results : [];
+                } catch (error) {
+                    if (seq !== this._searchSeq) return;
+                    console.warn('Semantic search unavailable, showing substring matches:', error.message);
+                    this.state.searchResults = null;  // fall back to the local view
+                }
+
+                this.state.searchPending = false;
+                this.renderPlants();
             }
 
             async loadStats() {
@@ -1057,6 +1238,7 @@
             updateUI() {
                 this.updateMemberSelectors();
                 this.renderPlants();
+                this.renderMatches();
                 this.updateStats();
             }
 
@@ -1174,26 +1356,36 @@
             renderPlants() {
                 const container = document.getElementById('plantsGrid');
                 
-                // Filter plants based on current filter and search term
-                let filteredPlants = this.state.plants;
-                
-                if (this.state.currentFilter !== 'all') {
-                    filteredPlants = filteredPlants.filter(plant => plant.type === this.state.currentFilter);
+                const term = this.state.searchTerm.trim();
+                let filteredPlants;
+
+                if (term && this.state.searchResults) {
+                    // Server-ranked results, already type-filtered by the API.
+                    filteredPlants = this.state.searchResults;
+                } else {
+                    filteredPlants = this.state.plants;
+
+                    if (this.state.currentFilter !== 'all') {
+                        filteredPlants = filteredPlants.filter(plant => plant.type === this.state.currentFilter);
+                    }
+
+                    if (term) {
+                        const searchLower = term.toLowerCase();
+                        filteredPlants = filteredPlants.filter(plant =>
+                            plant.name.toLowerCase().includes(searchLower) ||
+                            plant.description.toLowerCase().includes(searchLower) ||
+                            plant.category.toLowerCase().includes(searchLower)
+                        );
+                    }
                 }
-                
-                if (this.state.searchTerm) {
-                    const searchLower = this.state.searchTerm.toLowerCase();
-                    filteredPlants = filteredPlants.filter(plant =>
-                        plant.name.toLowerCase().includes(searchLower) ||
-                        plant.description.toLowerCase().includes(searchLower) ||
-                        plant.category.toLowerCase().includes(searchLower)
-                    );
-                }
-                
+
                 container.innerHTML = '';
-                
+
                 if (filteredPlants.length === 0) {
-                    container.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: #666; margin: 40px 0;">No plants found matching your criteria.</p>';
+                    const message = this.state.searchPending
+                        ? 'Searching&hellip;'
+                        : 'No plants found matching your criteria.';
+                    container.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: #666; margin: 40px 0;">' + message + '</p>';
                     return;
                 }
                 
@@ -1205,6 +1397,7 @@
                     const plantCard = document.createElement('div');
                     plantCard.className = `plant-card ${plant.type} fade-in`;
                     plantCard.innerHTML = `
+                        ${this.plantGlyph(plant)}
                         <div class="plant-name">${plant.name}</div>
                         <div class="plant-category">${plant.category}</div>
                         <div class="plant-description">${plant.description}</div>
@@ -1225,6 +1418,192 @@
                     `;
                     container.appendChild(plantCard);
                 });
+
+                this.revealPhotos(container);
+            }
+
+            // Every plant gets an image immediately, whether or not a photo
+            // exists, by drawing one. Inline SVG costs no request and no decode,
+            // so the image area is filled in the same paint as the card. A photo,
+            // when there is one, layers over this rather than replacing it.
+            plantGlyph(plant) {
+                // Category picks the base hue; the name nudges it, so two
+                // succulents are related but distinguishable.
+                const BASE = {
+                    houseplant: 140, succulent: 168, herb: 96, vegetable: 28,
+                    flower: 330, tree: 118, shrub: 152, other: 200,
+                };
+                let hash = 0;
+                for (let i = 0; i < plant.name.length; i++) {
+                    hash = (hash * 31 + plant.name.charCodeAt(i)) % 360;
+                }
+                const hue = ((BASE[plant.category] ?? 200) + (hash % 34) - 17 + 360) % 360;
+
+                const SHAPES = {
+                    houseplant: '<path d="M50 84C50 60 34 40 20 32c-2 26 10 46 30 52zM50 84c0-24 16-44 30-52 2 26-10 46-30 52z" fill="currentColor"/><path d="M50 86V52" stroke="currentColor" stroke-width="3" fill="none"/>',
+                    succulent: '<g fill="currentColor"><ellipse cx="50" cy="50" rx="9" ry="20"/><ellipse cx="50" cy="50" rx="9" ry="20" transform="rotate(60 50 50)"/><ellipse cx="50" cy="50" rx="9" ry="20" transform="rotate(120 50 50)"/><circle cx="50" cy="50" r="6" opacity="0.7"/></g>',
+                    herb: '<path d="M50 88V30" stroke="currentColor" stroke-width="3" fill="none"/><g fill="currentColor"><ellipse cx="38" cy="44" rx="11" ry="6" transform="rotate(-28 38 44)"/><ellipse cx="62" cy="52" rx="11" ry="6" transform="rotate(28 62 52)"/><ellipse cx="38" cy="62" rx="10" ry="5" transform="rotate(-28 38 62)"/><ellipse cx="50" cy="28" rx="7" ry="10"/></g>',
+                    vegetable: '<circle cx="50" cy="58" r="22" fill="currentColor"/><path d="M50 36V20" stroke="currentColor" stroke-width="3" fill="none"/><ellipse cx="40" cy="24" rx="9" ry="5" transform="rotate(-30 40 24)" fill="currentColor"/><ellipse cx="60" cy="24" rx="9" ry="5" transform="rotate(30 60 24)" fill="currentColor"/>',
+                    flower: '<g fill="currentColor"><circle cx="50" cy="34" r="11"/><circle cx="66" cy="46" r="11"/><circle cx="60" cy="64" r="11"/><circle cx="40" cy="64" r="11"/><circle cx="34" cy="46" r="11"/><circle cx="50" cy="50" r="8" opacity="0.6"/></g>',
+                    tree: '<circle cx="50" cy="42" r="24" fill="currentColor"/><path d="M50 66v22" stroke="currentColor" stroke-width="5" fill="none"/>',
+                    shrub: '<g fill="currentColor"><circle cx="36" cy="56" r="15"/><circle cx="64" cy="56" r="15"/><circle cx="50" cy="44" r="17"/></g><path d="M50 70v18" stroke="currentColor" stroke-width="4" fill="none"/>',
+                    other: '<path d="M26 74C26 46 46 26 74 26c0 28-20 48-48 48z" fill="currentColor"/><path d="M28 72 60 40" stroke="hsl(0 0% 100% / 0.5)" stroke-width="3" fill="none"/>',
+                };
+
+                const shape = SHAPES[plant.category] || SHAPES.other;
+                const photo = (plant.images && plant.images[0]) || '';
+
+                return `
+                    <div class="plant-image" style="--plant-hue: ${hue}">
+                        <svg class="plant-glyph" viewBox="0 0 100 100" aria-hidden="true">${shape}</svg>
+                        <span class="plant-initial">${plant.category}</span>
+                        ${photo ? `<img class="plant-photo" loading="lazy" decoding="async" src="${photo}" alt="">` : ''}
+                    </div>`;
+            }
+
+            // A photo is only revealed once it has actually decoded. Without this
+            // the browser can paint it in strips over the placeholder, which reads
+            // as slower than waiting a moment and fading it in whole.
+            revealPhotos(container) {
+                container.querySelectorAll('img.plant-photo').forEach(img => {
+                    const show = () => img.classList.add('ready');
+
+                    // A broken or blocked URL leaves the generated glyph in place,
+                    // which is why the card never shows an empty box.
+                    img.addEventListener('error', () => img.remove(), { once: true });
+
+                    if (img.complete && img.naturalWidth) { show(); return; }
+
+                    // decode() cannot run before the image has data. With
+                    // loading="lazy" it rejects straight away for anything below
+                    // the fold and would never resolve later, so wait for load
+                    // first and only then decode - which is what makes the fade
+                    // show a whole image rather than one painted in strips.
+                    img.addEventListener('load', () => {
+                        if (img.decode) img.decode().then(show).catch(show);
+                        else show();
+                    }, { once: true });
+                });
+            }
+
+            renderMatches() {
+                const container = document.getElementById('matchesList');
+                if (!container) return;
+
+                const plantName = id => {
+                    const plant = this.state.plants.find(p => p.id === id);
+                    return plant ? plant.name : 'a removed listing';
+                };
+                const memberName = id => {
+                    const member = this.state.members.find(m => m.id === id);
+                    return member ? member.name : 'Unknown';
+                };
+
+                const trades = [...this.state.trades].sort((a, b) => b.score - a.score);
+
+                if (!trades.length) {
+                    container.innerHTML = '<p style="text-align:center;color:#666;margin:24px 0;">No suggested trades yet. Add an offer or a request and they appear here.</p>';
+                    return;
+                }
+
+                container.innerHTML = trades.map(trade => `
+                    <div class="match-card ${trade.action}">
+                        <div>
+                            <span class="match-pair">${plantName(trade.offerId)}</span>
+                            <span class="match-arrow">&harr;</span>
+                            <span class="match-pair">${plantName(trade.wantedId)}</span>
+                        </div>
+                        <div class="match-meta">
+                            <span>${memberName(trade.offerMemberId)} offers &middot; ${memberName(trade.wantedMemberId)} wants</span>
+                            <button type="button" class="match-strength"
+                                    title="Message ${memberName(trade.offerMemberId)} about this trade"
+                                    onclick="app.openTradeMessage('${trade.id}')">${trade.action === 'notify' ? 'strong match' : 'worth a look'}</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Opens the message modal for a suggested trade. A match knows both
+            // sides, so the sender is pre-set to the member who wants the plant and
+            // the recipient to the one offering it. Only the trade id is passed -
+            // names are looked up here rather than interpolated into the onclick,
+            // so an apostrophe in a plant name cannot break the markup.
+            openTradeMessage(tradeId) {
+                const trade = this.state.trades.find(t => t.id === tradeId);
+                if (!trade) return;
+
+                const plantName = id => {
+                    const plant = this.state.plants.find(p => p.id === id);
+                    return plant ? plant.name : 'a listing that has since gone';
+                };
+                const memberName = id => {
+                    const member = this.state.members.find(m => m.id === id);
+                    return member ? member.name : 'there';
+                };
+
+                const offered = plantName(trade.offerId);
+                const sought = plantName(trade.wantedId);
+                const offerer = memberName(trade.offerMemberId);
+
+                // Pre-select the wanting member as sender where that profile exists;
+                // they can change it before sending.
+                const from = document.getElementById('messageFrom');
+                if (from && [...from.options].some(o => o.value === trade.wantedMemberId)) {
+                    from.value = trade.wantedMemberId;
+                }
+
+                this.openMessageModal(trade.offerMemberId, offerer);
+
+                // A draft, not a decision - the member edits or replaces it.
+                const content = document.getElementById('messageContent');
+                if (content && !content.value.trim()) {
+                    content.value =
+                        `Hi ${offerer}, I saw your ${offered} and it looks like a good match ` +
+                        `for the ${sought} I'm after. Would you like to trade?`;
+                }
+                if (content) content.focus();
+            }
+
+            // Asks the server to categorise the listing from its description, so
+            // the member does not have to pick from eight options. Only pre-fills
+            // when the answer is confident; a wrong guess costs one click, and
+            // the member can always override.
+            async suggestCategory() {
+                const name = document.getElementById('plantName').value.trim();
+                const description = document.getElementById('plantDescription').value.trim();
+                const hint = document.getElementById('categoryHint');
+                const select = document.getElementById('plantCategory');
+
+                if (description.length < 12) { hint.textContent = ''; return; }
+
+                try {
+                    const response = await fetch('/api/plants/classify', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name, description }),
+                    });
+                    if (!response.ok) return;
+                    const result = await response.json();
+                    if (!result.available) { hint.textContent = ''; return; }
+
+                    hint.classList.remove('warn');
+
+                    if (result.likelySpam) {
+                        hint.classList.add('warn');
+                        hint.textContent = 'This does not look like a plant listing.';
+                        return;
+                    }
+
+                    // Never overwrite a choice the member already made.
+                    if (result.suggest && !select.value) {
+                        select.value = result.category;
+                        hint.textContent = 'Category set to ' + result.category + '. Change it if that is wrong.';
+                    } else {
+                        hint.textContent = '';
+                    }
+                } catch (error) {
+                    hint.textContent = '';
+                }
             }
 
             renderMessages(memberId = null) {

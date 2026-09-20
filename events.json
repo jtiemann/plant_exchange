@@ -108,7 +108,9 @@
       "type": "wanted",
       "status": "available",
       "createdAt": "2025-06-26T19:18:13.144Z",
-      "images": []
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/Aloe_arborescens_on_Monte_Vumba_%284387600468%29.jpg/500px-Aloe_arborescens_on_Monte_Vumba_%284387600468%29.jpg"
+      ]
     },
     "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
     "timestamp": "2025-06-26T19:18:13.144Z",
@@ -127,11 +129,1628 @@
       "type": "offer",
       "status": "available",
       "createdAt": "2025-06-26T20:14:51.043Z",
-      "images": []
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/79/Cannabis_sativa_Koehler_drawing.jpg/500px-Cannabis_sativa_Koehler_drawing.jpg"
+      ]
     },
     "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
     "timestamp": "2025-06-26T20:14:51.047Z",
     "version": 1,
     "sequenceNumber": 8
+  },
+  {
+    "id": "4a85eeb5-4f32-4f23-b37c-49caeaca1871",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "12d868ad-499e-4318-9ce5-21d2db3fe01c",
+      "name": "Monstera Deliciosa",
+      "description": "Four years old with deep splits in every leaf. Needs a moss pole and a bright corner.",
+      "category": "houseplant",
+      "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:08:26.794Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2e/Monstera_deliciosa2.jpg/500px-Monstera_deliciosa2.jpg"
+      ]
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T12:08:26.794Z",
+    "version": 1,
+    "sequenceNumber": 9
+  },
+  {
+    "id": "deb2a898-acea-4ef1-af38-c07c4bad2bbf",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "d00e1746-dae7-4aea-9d5c-21dfdf020dda",
+      "name": "Golden Pothos",
+      "description": "Trails about two metres off a shelf. Nearly impossible to kill, fine in a dim hallway.",
+      "category": "houseplant",
+      "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:08:26.806Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/62/Money_Plant_%28Epipremnum_aureum%29_4.jpg/500px-Money_Plant_%28Epipremnum_aureum%29_4.jpg"
+      ]
+    },
+    "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+    "timestamp": "2026-09-20T12:08:26.806Z",
+    "version": 1,
+    "sequenceNumber": 10
+  },
+  {
+    "id": "8c08b930-206d-412d-87ab-229a55200a4a",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "b31b5005-8e96-461d-a05b-e7c2b63543b7",
+      "name": "Snake Plant",
+      "description": "Upright and architectural. Tolerates being forgotten for a month at a time.",
+      "category": "houseplant",
+      "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:08:26.831Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fb/Snake_Plant_%28Sansevieria_trifasciata_%27Laurentii%27%29.jpg/500px-Snake_Plant_%28Sansevieria_trifasciata_%27Laurentii%27%29.jpg"
+      ]
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T12:08:26.831Z",
+    "version": 1,
+    "sequenceNumber": 11
+  },
+  {
+    "id": "1fec6887-6de3-4330-825e-82d08d7fe969",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "f897dd54-6c5b-4e4e-9f11-a341f0286193",
+      "name": "ZZ Plant",
+      "description": "Glossy dark leaves, stores water in the rhizome. Good for a north-facing room.",
+      "category": "houseplant",
+      "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:08:26.839Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cf/Zamioculcas_zamiifolia_1.jpg/500px-Zamioculcas_zamiifolia_1.jpg"
+      ]
+    },
+    "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+    "timestamp": "2026-09-20T12:08:26.839Z",
+    "version": 1,
+    "sequenceNumber": 12
+  },
+  {
+    "id": "0df209e5-ba46-4c1d-9606-8f39a1f057c4",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "7d88f762-8209-4597-8967-dd1e6dc9d928",
+      "name": "Fiddle Leaf Fig",
+      "description": "About 1.5m tall. Dramatic but sulks if you move it around.",
+      "category": "houseplant",
+      "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:08:26.848Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/84/Starr_031108-0130_Ficus_lyrata.jpg/500px-Starr_031108-0130_Ficus_lyrata.jpg"
+      ]
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T12:08:26.848Z",
+    "version": 1,
+    "sequenceNumber": 13
+  },
+  {
+    "id": "c5ff66a3-8da7-4287-b3ff-9823a3c664f8",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "77ec54bf-98e6-4a6f-af0c-66813aea113e",
+      "name": "Rubber Plant",
+      "description": "Burgundy foliage, thick waxy leaves. Growing faster than my ceiling allows.",
+      "category": "houseplant",
+      "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:08:26.854Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/16/Ficus_elastica_leaves_02.JPG/500px-Ficus_elastica_leaves_02.JPG"
+      ]
+    },
+    "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+    "timestamp": "2026-09-20T12:08:26.854Z",
+    "version": 1,
+    "sequenceNumber": 14
+  },
+  {
+    "id": "5b34e152-af91-4ead-acc7-f5c4b3ea46e2",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "95ffc515-2260-4d76-a66c-3a7d5b7ee492",
+      "name": "Spider Plant",
+      "description": "Covered in babies I keep having to remove. Takes any light, any neglect.",
+      "category": "houseplant",
+      "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:08:26.859Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b1/Hierbabuena_0611_Revised.jpg/500px-Hierbabuena_0611_Revised.jpg"
+      ]
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T12:08:26.859Z",
+    "version": 1,
+    "sequenceNumber": 15
+  },
+  {
+    "id": "559a6dc1-ab1c-4851-a461-48cfdfa7213b",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "68ec1ceb-6d96-4907-956c-f7b35a13325a",
+      "name": "Peace Lily",
+      "description": "Droops theatrically when thirsty, recovers within the hour. Flowers twice a year.",
+      "category": "houseplant",
+      "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:08:26.864Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bd/Spathiphyllum_cochlearispathum_RTBG.jpg/500px-Spathiphyllum_cochlearispathum_RTBG.jpg"
+      ]
+    },
+    "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+    "timestamp": "2026-09-20T12:08:26.864Z",
+    "version": 1,
+    "sequenceNumber": 16
+  },
+  {
+    "id": "fc150859-5a60-4580-8bc6-24699bb81d15",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "da14e752-d805-4acd-aa3c-e209c6b1fd1a",
+      "name": "Philodendron Brasil",
+      "description": "Variegated heart-shaped leaves on long vines. Very forgiving.",
+      "category": "houseplant",
+      "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:08:26.871Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bb/Philodendron_scandens_subsp_oxycardium2.jpg/500px-Philodendron_scandens_subsp_oxycardium2.jpg"
+      ]
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T12:08:26.871Z",
+    "version": 1,
+    "sequenceNumber": 17
+  },
+  {
+    "id": "07349fa4-6580-41bd-995c-36b814c2cb80",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "a66ed496-be42-47b6-b2c4-ffef6a87d813",
+      "name": "Chinese Money Plant",
+      "description": "Round flat leaves on thin stems. Constantly throwing off pups.",
+      "category": "houseplant",
+      "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:08:26.880Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6d/Pilea_peperomioides_Chinese_money_plant.jpg/500px-Pilea_peperomioides_Chinese_money_plant.jpg"
+      ]
+    },
+    "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+    "timestamp": "2026-09-20T12:08:26.880Z",
+    "version": 1,
+    "sequenceNumber": 18
+  },
+  {
+    "id": "e9736719-6485-4e19-b270-b7df692b3ed0",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "2dabf9c9-5698-43ae-9c0f-139e90bd724b",
+      "name": "Calathea Orbifolia",
+      "description": "Silver-striped leaves that fold up at night. Wants humidity and filtered light.",
+      "category": "houseplant",
+      "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:08:26.885Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fa/Calathea_orbifolia_2.jpg/500px-Calathea_orbifolia_2.jpg"
+      ]
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T12:08:26.885Z",
+    "version": 1,
+    "sequenceNumber": 19
+  },
+  {
+    "id": "b1e5a721-14a3-48c6-91e9-75a94a1f91fe",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "9f5ef42a-c8c1-437e-9476-d897e56b1eae",
+      "name": "Bird of Paradise",
+      "description": "Large paddle leaves, needs a bright spot and plenty of room.",
+      "category": "houseplant",
+      "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:08:26.889Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1c/Strelitzia_larger.jpg/500px-Strelitzia_larger.jpg"
+      ]
+    },
+    "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+    "timestamp": "2026-09-20T12:08:26.889Z",
+    "version": 1,
+    "sequenceNumber": 20
+  },
+  {
+    "id": "5ec870f2-426a-41af-bad9-43ff9d10003f",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "9e6cc2e8-4a0a-4d7c-9814-99d0759ecfca",
+      "name": "Golden Pothos",
+      "description": "Rooted cuttings in water, ready to pot. Great starter for someone new to this.",
+      "category": "houseplant",
+      "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:08:26.893Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/62/Money_Plant_%28Epipremnum_aureum%29_4.jpg/500px-Money_Plant_%28Epipremnum_aureum%29_4.jpg"
+      ]
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T12:08:26.893Z",
+    "version": 1,
+    "sequenceNumber": 21
+  },
+  {
+    "id": "fa80c01e-9640-45a2-882e-8d9a2ec09cfb",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "42f34af9-9146-46db-a774-8b4c75a81f58",
+      "name": "Snake Plant",
+      "description": "Compact variety, about 30cm. Thrives on being ignored in a bathroom.",
+      "category": "houseplant",
+      "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:08:26.897Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fb/Snake_Plant_%28Sansevieria_trifasciata_%27Laurentii%27%29.jpg/500px-Snake_Plant_%28Sansevieria_trifasciata_%27Laurentii%27%29.jpg"
+      ]
+    },
+    "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+    "timestamp": "2026-09-20T12:08:26.897Z",
+    "version": 1,
+    "sequenceNumber": 22
+  },
+  {
+    "id": "efe12e62-80b4-4484-8695-75e5fb2d71a8",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "fae79fb1-93bd-43a3-9187-efb0605efa5d",
+      "name": "Monstera Deliciosa",
+      "description": "Small rooted cutting with two leaves. Will take a few years to get dramatic.",
+      "category": "houseplant",
+      "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:08:26.901Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2e/Monstera_deliciosa2.jpg/500px-Monstera_deliciosa2.jpg"
+      ]
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T12:08:26.901Z",
+    "version": 1,
+    "sequenceNumber": 23
+  },
+  {
+    "id": "ea782a01-7c0b-4ae6-91e3-19b42a978efd",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "3bccce93-9861-4ec3-ab04-fb81d7bcaa1d",
+      "name": "Jade Plant",
+      "description": "Thick woody trunk, about eight years old. Stores water in fleshy leaves.",
+      "category": "succulent",
+      "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:08:26.905Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5a/Crassula_ovata_700.jpg/500px-Crassula_ovata_700.jpg"
+      ]
+    },
+    "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+    "timestamp": "2026-09-20T12:08:26.905Z",
+    "version": 1,
+    "sequenceNumber": 24
+  },
+  {
+    "id": "f082ae81-067c-4bf5-9982-bbb35e2e31f2",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "375e1f4a-e4a6-48cb-a36a-e2e959abe0f5",
+      "name": "Echeveria",
+      "description": "Tight blue-grey rosette that blushes pink in strong sun.",
+      "category": "succulent",
+      "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:08:26.909Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/85/Echeveria_elegans_-_1.jpg/500px-Echeveria_elegans_-_1.jpg"
+      ]
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T12:08:26.909Z",
+    "version": 1,
+    "sequenceNumber": 25
+  },
+  {
+    "id": "940c1fff-f997-4a4b-822e-0a82df21ac0c",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "ada69178-2127-43ff-91d1-719d21ed4588",
+      "name": "String of Pearls",
+      "description": "Cascading strands of bead-like leaves. Wants a sunny window and very little water.",
+      "category": "succulent",
+      "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:08:26.913Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fd/Senecio_rowleyanus_leaves.jpg/500px-Senecio_rowleyanus_leaves.jpg"
+      ]
+    },
+    "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+    "timestamp": "2026-09-20T12:08:26.913Z",
+    "version": 1,
+    "sequenceNumber": 26
+  },
+  {
+    "id": "ff4fbfbc-1045-4007-87c6-a3307a7397f4",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "35aeaa23-d0b4-4599-8838-e86a40deabfc",
+      "name": "Aloe Vera",
+      "description": "Medicinal variety, good for burns. Plenty of offsets around the base.",
+      "category": "succulent",
+      "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:08:26.917Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4b/Aloe_vera_flower_inset.png/500px-Aloe_vera_flower_inset.png"
+      ]
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T12:08:26.917Z",
+    "version": 1,
+    "sequenceNumber": 27
+  },
+  {
+    "id": "0f0e230a-713b-46f1-a175-1ec98f1cbcf1",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "4234e219-e5a6-4d5c-98a9-4f3e1902b57b",
+      "name": "Haworthia",
+      "description": "Small translucent-tipped rosette. Handles lower light than most in this family.",
+      "category": "succulent",
+      "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:08:26.921Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b9/Haworthia_cymbiformis_1.jpg/500px-Haworthia_cymbiformis_1.jpg"
+      ]
+    },
+    "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+    "timestamp": "2026-09-20T12:08:26.921Z",
+    "version": 1,
+    "sequenceNumber": 28
+  },
+  {
+    "id": "6d0cecaf-24d8-4968-88e2-6849d616eb0c",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "34821156-8da6-4686-83c4-5bc082840a85",
+      "name": "Christmas Cactus",
+      "description": "Blooms reliably every December. Segmented trailing stems.",
+      "category": "succulent",
+      "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:08:26.925Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ef/Cactus_de_no%C3%ABl_rev.jpg/500px-Cactus_de_no%C3%ABl_rev.jpg"
+      ]
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T12:08:26.925Z",
+    "version": 1,
+    "sequenceNumber": 29
+  },
+  {
+    "id": "2346a4e4-9a04-42be-aaed-6a61c132dde5",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "ab48e46e-1b8d-47b6-a611-52246d2b0434",
+      "name": "Burros Tail",
+      "description": "Heavy trailing stems packed with plump leaves. Handle gently, they drop easily.",
+      "category": "succulent",
+      "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:08:26.929Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e5/Donkey%27s_tail_in_bloom_March_06.jpg/500px-Donkey%27s_tail_in_bloom_March_06.jpg"
+      ]
+    },
+    "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+    "timestamp": "2026-09-20T12:08:26.929Z",
+    "version": 1,
+    "sequenceNumber": 30
+  },
+  {
+    "id": "7b900aac-1a7a-408e-bf75-de565e91df04",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "439dab48-93c0-468b-a193-573bfa3413e7",
+      "name": "Echeveria",
+      "description": "Several rooted offsets from the mother plant. Full sun, gritty soil.",
+      "category": "succulent",
+      "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:08:26.934Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/85/Echeveria_elegans_-_1.jpg/500px-Echeveria_elegans_-_1.jpg"
+      ]
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T12:08:26.934Z",
+    "version": 1,
+    "sequenceNumber": 31
+  },
+  {
+    "id": "c7598b41-edea-4558-9c47-aeca629b8f55",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "5d6a4791-881e-4cd6-a529-6c288f9d6028",
+      "name": "Jade Plant",
+      "description": "Young cutting, already branching. Grows into a small tree over time.",
+      "category": "succulent",
+      "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:08:26.939Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5a/Crassula_ovata_700.jpg/500px-Crassula_ovata_700.jpg"
+      ]
+    },
+    "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+    "timestamp": "2026-09-20T12:08:26.939Z",
+    "version": 1,
+    "sequenceNumber": 32
+  },
+  {
+    "id": "14e58b82-d0b1-4cf4-9f31-589cf48bc0d6",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "0e05f5ee-420c-48eb-9221-a39c6218c9b9",
+      "name": "Basil",
+      "description": "Genovese type, grown from seed this spring. Pinch the tops and it bushes out.",
+      "category": "herb",
+      "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:08:26.943Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/97/Ocimum_basilicum_8zz.jpg/500px-Ocimum_basilicum_8zz.jpg"
+      ]
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T12:08:26.943Z",
+    "version": 1,
+    "sequenceNumber": 33
+  },
+  {
+    "id": "bbf7287c-1e18-4daa-8a6b-9a67776213e2",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "4df81c23-ca43-468f-97f0-4efa2d7687a5",
+      "name": "Rosemary",
+      "description": "Woody and established, survives frost outdoors here. Cuttings root easily.",
+      "category": "herb",
+      "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:08:26.947Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a3/Rosemary_in_bloom.JPG/500px-Rosemary_in_bloom.JPG"
+      ]
+    },
+    "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+    "timestamp": "2026-09-20T12:08:26.947Z",
+    "version": 1,
+    "sequenceNumber": 34
+  },
+  {
+    "id": "2cf01acd-0ce7-407d-8b6f-be1c75654ec5",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "7a0c4675-47f0-4032-813e-5be335986118",
+      "name": "Mint",
+      "description": "Spreads aggressively, keep it in a pot or it takes the whole bed.",
+      "category": "herb",
+      "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:08:26.951Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4d/Mentha_spicata-IMG_6186.jpg/500px-Mentha_spicata-IMG_6186.jpg"
+      ]
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T12:08:26.951Z",
+    "version": 1,
+    "sequenceNumber": 35
+  },
+  {
+    "id": "0db57d89-7361-402f-91ad-1cfe34505699",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "ce609db5-66b0-4143-ad69-8f57e667b8c5",
+      "name": "Thyme",
+      "description": "Creeping variety, good between paving stones. Drought tolerant once established.",
+      "category": "herb",
+      "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:08:26.955Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ea/Thyme-Bundle.jpg/500px-Thyme-Bundle.jpg"
+      ]
+    },
+    "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+    "timestamp": "2026-09-20T12:08:26.955Z",
+    "version": 1,
+    "sequenceNumber": 36
+  },
+  {
+    "id": "9d362c73-50d2-4ab7-a237-8343df89f413",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "093273b0-93c3-49b5-8fb1-54f0929e94e9",
+      "name": "Lemon Balm",
+      "description": "Citrus-scented leaves, makes a calming tea. Self-seeds everywhere.",
+      "category": "herb",
+      "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:08:26.960Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/70/Lemon_balm_plant.jpg/500px-Lemon_balm_plant.jpg"
+      ]
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T12:08:26.960Z",
+    "version": 1,
+    "sequenceNumber": 37
+  },
+  {
+    "id": "193ef72a-bdd3-43b7-b7f9-456bf089588a",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "92933228-e8ea-4350-9d9a-ddc59c947abd",
+      "name": "Sage",
+      "description": "Soft grey-green leaves. Perennial here, comes back stronger every year.",
+      "category": "herb",
+      "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:08:26.963Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5a/Salvia_officinalis0.jpg/500px-Salvia_officinalis0.jpg"
+      ]
+    },
+    "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+    "timestamp": "2026-09-20T12:08:26.963Z",
+    "version": 1,
+    "sequenceNumber": 38
+  },
+  {
+    "id": "a73df74c-f890-4f2a-a832-6c49c9929512",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "f9357eab-e523-4165-9d5c-4aef6dad838c",
+      "name": "Chives",
+      "description": "Clumping, with purple edible flowers in spring. Divide and share.",
+      "category": "herb",
+      "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:08:26.968Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/49/Allium_schoenoprasum_-_Bombus_lapidarius_-_Tootsi.jpg/500px-Allium_schoenoprasum_-_Bombus_lapidarius_-_Tootsi.jpg"
+      ]
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T12:08:26.968Z",
+    "version": 1,
+    "sequenceNumber": 39
+  },
+  {
+    "id": "014821cd-939c-4701-a9d0-94189e18d7eb",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "cec59b47-01d6-4309-81df-27b28ae9c2ed",
+      "name": "Basil",
+      "description": "Thai variety, purple stems and an aniseed note. Needs warmth.",
+      "category": "herb",
+      "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:08:26.973Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/97/Ocimum_basilicum_8zz.jpg/500px-Ocimum_basilicum_8zz.jpg"
+      ]
+    },
+    "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+    "timestamp": "2026-09-20T12:08:26.973Z",
+    "version": 1,
+    "sequenceNumber": 40
+  },
+  {
+    "id": "d1a8481b-71f0-4ef3-9636-0792c4e2a91d",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "a0f14b3a-fac1-4f1f-8e6d-0b2afe4b3d6d",
+      "name": "Mint",
+      "description": "Chocolate mint, rooted runners ready to go. Same warning about spreading.",
+      "category": "herb",
+      "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:08:26.978Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4d/Mentha_spicata-IMG_6186.jpg/500px-Mentha_spicata-IMG_6186.jpg"
+      ]
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T12:08:26.978Z",
+    "version": 1,
+    "sequenceNumber": 41
+  },
+  {
+    "id": "5f0d955e-583d-4d53-a044-fd3ff42ad0e6",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "11b02321-d021-43fa-b564-7354b34586c9",
+      "name": "Cherry Tomato",
+      "description": "Sungold seedlings, absurdly sweet. Needs staking and full sun.",
+      "category": "vegetable",
+      "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:08:26.983Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/10/Tomates_cerises_Luc_Viatour.jpg/500px-Tomates_cerises_Luc_Viatour.jpg"
+      ]
+    },
+    "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+    "timestamp": "2026-09-20T12:08:26.983Z",
+    "version": 1,
+    "sequenceNumber": 42
+  },
+  {
+    "id": "1d7db08d-9828-421f-8d51-b7195f0423e6",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "721898ae-a51e-4f3c-a3dc-80f6f51ef57a",
+      "name": "Padron Pepper",
+      "description": "Most are mild, roughly one in ten is not. Prolific in a warm spot.",
+      "category": "vegetable",
+      "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:08:26.988Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/54/Pementos_de_Padron.jpg/500px-Pementos_de_Padron.jpg"
+      ]
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T12:08:26.988Z",
+    "version": 1,
+    "sequenceNumber": 43
+  },
+  {
+    "id": "e9ce395b-cdd3-4f1d-81cb-988cccffec76",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "74561462-e1d3-4f83-8c84-8abfd15b50a5",
+      "name": "Rainbow Chard",
+      "description": "Stems in pink, yellow and orange. Cut and it keeps producing all season.",
+      "category": "vegetable",
+      "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:08:26.993Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/45/Chard_%28Beta_vulgaris_var_cicla%29.jpg/500px-Chard_%28Beta_vulgaris_var_cicla%29.jpg"
+      ]
+    },
+    "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+    "timestamp": "2026-09-20T12:08:26.993Z",
+    "version": 1,
+    "sequenceNumber": 44
+  },
+  {
+    "id": "8f244118-3c36-4b7c-b68d-3084d758313f",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "74e84b54-5fd9-4b03-a6cd-b8041bc730de",
+      "name": "Sugar Snap Pea",
+      "description": "Climbing variety, needs a trellis. Eat the whole pod raw.",
+      "category": "vegetable",
+      "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:08:26.997Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8a/Sugar_Snap_Pea.JPG/500px-Sugar_Snap_Pea.JPG"
+      ]
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T12:08:26.997Z",
+    "version": 1,
+    "sequenceNumber": 45
+  },
+  {
+    "id": "e0ffca3d-d722-450e-aaff-13b0d664053b",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "8eac4508-4f0f-420a-97f9-4c7ad041603e",
+      "name": "Courgette",
+      "description": "One plant will feed a street. You have been warned.",
+      "category": "vegetable",
+      "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:08:27.002Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/92/CSA-Striped-Zucchini.jpg/500px-CSA-Striped-Zucchini.jpg"
+      ]
+    },
+    "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+    "timestamp": "2026-09-20T12:08:27.002Z",
+    "version": 1,
+    "sequenceNumber": 46
+  },
+  {
+    "id": "65d2f5f0-7d06-4db0-8a38-37a8f8c92a29",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "2a26db4c-cf72-4041-8f31-c276ef367a1f",
+      "name": "Rocket",
+      "description": "Peppery salad leaf, ready in four weeks. Bolts in high summer.",
+      "category": "vegetable",
+      "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:08:27.007Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3f/Eruca_vesicaria_BM010755249.jpg/500px-Eruca_vesicaria_BM010755249.jpg"
+      ]
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T12:08:27.007Z",
+    "version": 1,
+    "sequenceNumber": 47
+  },
+  {
+    "id": "76016991-af2e-4f39-a604-622454798ddf",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "e427986b-dd86-40e8-973d-94240d340f10",
+      "name": "Cherry Tomato",
+      "description": "Black Cherry variety, deep purple fruit. Seedlings in small pots.",
+      "category": "vegetable",
+      "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:08:27.011Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/10/Tomates_cerises_Luc_Viatour.jpg/500px-Tomates_cerises_Luc_Viatour.jpg"
+      ]
+    },
+    "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+    "timestamp": "2026-09-20T12:08:27.011Z",
+    "version": 1,
+    "sequenceNumber": 48
+  },
+  {
+    "id": "99c7fde5-3b0a-4126-82d5-37c4e4cc6194",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "2e665525-08fe-4556-a75c-bf3e19e4a750",
+      "name": "Lavender",
+      "description": "English type, strongly scented. Bees cover it from June onwards.",
+      "category": "flower",
+      "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:08:27.017Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7e/Single_lavender_flower02.jpg/500px-Single_lavender_flower02.jpg"
+      ]
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T12:08:27.017Z",
+    "version": 1,
+    "sequenceNumber": 49
+  },
+  {
+    "id": "0a950989-7aea-4f33-b8e5-4cc4c65c33a0",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "5947685f-4d1d-497a-b6c3-8a0b3745438b",
+      "name": "Dahlia",
+      "description": "Tubers of a deep red decorative form. Lift before the first hard frost.",
+      "category": "flower",
+      "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:08:27.023Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ab/Dahlia_x_hybrida.jpg/500px-Dahlia_x_hybrida.jpg"
+      ]
+    },
+    "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+    "timestamp": "2026-09-20T12:08:27.023Z",
+    "version": 1,
+    "sequenceNumber": 50
+  },
+  {
+    "id": "b8d55b59-e43d-4896-99af-bd8a0b55b264",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "00049a19-25cb-4a61-93f5-92be55a9fcf0",
+      "name": "Cosmos",
+      "description": "Self-seeding annual, tall and airy. Flowers until the frost takes it.",
+      "category": "flower",
+      "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:08:27.033Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e0/Cosmos_bipinnatus%2C_a_wild_Cosmos_%289461227273%29.jpg/500px-Cosmos_bipinnatus%2C_a_wild_Cosmos_%289461227273%29.jpg"
+      ]
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T12:08:27.033Z",
+    "version": 1,
+    "sequenceNumber": 51
+  },
+  {
+    "id": "d76df17c-ce0b-4b48-89ca-fe87e5fecc96",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "dba355b1-2c09-42a4-8873-e0de36fcabfa",
+      "name": "Sweet Pea",
+      "description": "Old-fashioned scented mix. Cut often and it keeps flowering.",
+      "category": "flower",
+      "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:08:27.040Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d7/Sweet_Pea-7.jpg/500px-Sweet_Pea-7.jpg"
+      ]
+    },
+    "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+    "timestamp": "2026-09-20T12:08:27.040Z",
+    "version": 1,
+    "sequenceNumber": 52
+  },
+  {
+    "id": "b51483ea-9cb2-4770-a799-bcbddd5a9f1e",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "730f9cb0-8916-4af6-a46f-1975980206df",
+      "name": "Lavender",
+      "description": "Rooted cuttings from a mature plant. Wants gritty soil and full sun.",
+      "category": "flower",
+      "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:08:27.046Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7e/Single_lavender_flower02.jpg/500px-Single_lavender_flower02.jpg"
+      ]
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T12:08:27.046Z",
+    "version": 1,
+    "sequenceNumber": 53
+  },
+  {
+    "id": "c0b4c87b-131b-414c-bab8-a55787a1e013",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "091408fe-2207-4647-ab89-cca1c5b24f95",
+      "name": "Japanese Maple",
+      "description": "Young grafted specimen, fine cut leaves turning scarlet in autumn.",
+      "category": "tree",
+      "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:08:27.051Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d6/Acer_palmatum0.jpg/500px-Acer_palmatum0.jpg"
+      ]
+    },
+    "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+    "timestamp": "2026-09-20T12:08:27.051Z",
+    "version": 1,
+    "sequenceNumber": 54
+  },
+  {
+    "id": "f238205b-258a-4246-9985-3ff321b0ac91",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "d3a57dfc-d383-4267-9955-d5e75b72159a",
+      "name": "Olive Tree",
+      "description": "In a large pot, needs shelter over winter here. Silver foliage year round.",
+      "category": "tree",
+      "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:08:27.060Z",
+      "images": [
+        "https://upload.wikimedia.org/wikipedia/commons/8/84/Olivesfromjordan.jpg"
+      ]
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T12:08:27.060Z",
+    "version": 1,
+    "sequenceNumber": 55
+  },
+  {
+    "id": "daa1c8c8-4ae2-4f68-9215-2ee2851acd00",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "e9fa0c4c-c3f3-49a8-942b-a97a90c3d6d3",
+      "name": "Fig Tree",
+      "description": "Brown Turkey, fruits reliably against a south wall. Rooted sucker.",
+      "category": "tree",
+      "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:08:27.068Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2e/Ficus_carica_L%2C_1771.jpg/500px-Ficus_carica_L%2C_1771.jpg"
+      ]
+    },
+    "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+    "timestamp": "2026-09-20T12:08:27.068Z",
+    "version": 1,
+    "sequenceNumber": 56
+  },
+  {
+    "id": "afc672ea-b1ac-4a18-8697-9ab9acb9a771",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "ca1f20c5-c81f-49db-b4e1-efd3483961de",
+      "name": "Hydrangea",
+      "description": "Mophead type, flower colour shifts with soil acidity. Large rooted cutting.",
+      "category": "shrub",
+      "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:08:27.074Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fc/Hydrangea_arborescens_139866012.jpg/500px-Hydrangea_arborescens_139866012.jpg"
+      ]
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T12:08:27.074Z",
+    "version": 1,
+    "sequenceNumber": 57
+  },
+  {
+    "id": "1ae66d47-c223-4047-bb0c-eb642d006d10",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "8b161d75-528f-4f24-be82-511d2d19e1de",
+      "name": "Elderberry",
+      "description": "Flowers for cordial in June, berries in September. Grows fast.",
+      "category": "shrub",
+      "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:08:27.081Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a9/Sambucus-berries.jpg/500px-Sambucus-berries.jpg"
+      ]
+    },
+    "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+    "timestamp": "2026-09-20T12:08:27.081Z",
+    "version": 1,
+    "sequenceNumber": 58
+  },
+  {
+    "id": "f82c86ae-795f-4eb7-9b38-6cf3ac5b88e6",
+    "type": "PLANT_WANTED",
+    "payload": {
+      "id": "315774bd-6eb9-4988-8fa8-41cbae91d3eb",
+      "name": "cannabis",
+      "description": "low and fast, under 1m, 12 weeks",
+      "category": "herb",
+      "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "type": "wanted",
+      "status": "available",
+      "createdAt": "2026-09-20T12:27:54.907Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/79/Cannabis_sativa_Koehler_drawing.jpg/500px-Cannabis_sativa_Koehler_drawing.jpg"
+      ]
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T12:27:54.907Z",
+    "version": 1,
+    "sequenceNumber": 59
+  },
+  {
+    "id": "6d20cc95-03fe-482c-87c6-291a23cf1957",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "c961a5ea-2a04-45f2-8a89-6ba094ce481a",
+      "name": "Venus Flytrap",
+      "description": "Bog plant, needs rainwater only and a cold winter rest. Catches its own food.",
+      "category": "other",
+      "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:29:31.087Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/37/Venus_Flytrap_showing_trigger_hairs.jpg/500px-Venus_Flytrap_showing_trigger_hairs.jpg"
+      ]
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T12:29:31.087Z",
+    "version": 1,
+    "sequenceNumber": 60
+  },
+  {
+    "id": "a62c0569-afe8-4c05-afb1-d7523a4b643f",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "564bf910-b05d-4056-8a94-530f7c6a9aa3",
+      "name": "Air Plant",
+      "description": "No soil at all. Mist twice a week and mount it wherever you like.",
+      "category": "other",
+      "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T12:29:31.099Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6a/Tillandsia_fasciculata.jpg/500px-Tillandsia_fasciculata.jpg"
+      ]
+    },
+    "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+    "timestamp": "2026-09-20T12:29:31.100Z",
+    "version": 1,
+    "sequenceNumber": 61
+  },
+  {
+    "id": "d318ed92-c4df-493c-96ce-7bd0879f62ff",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "a551e9d9-cdca-46a4-8e85-77987b924af5",
+      "name": "Lemon Thyme",
+      "description": "Citrus-scented creeping variety, good in a sunny crack between stones.",
+      "category": "herb",
+      "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T13:32:25.608Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/29/Starr_070906-8846_Thymus_citriodorus.jpg/500px-Starr_070906-8846_Thymus_citriodorus.jpg"
+      ]
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T13:32:25.608Z",
+    "version": 1,
+    "sequenceNumber": 62
+  },
+  {
+    "id": "499146dd-a950-49a7-8d7e-77205acca605",
+    "type": "PLANT_WANTED",
+    "payload": {
+      "id": "faf773f3-5819-4193-8b56-67fb09406e85",
+      "name": "Trailing plant for a shelf",
+      "description": "Looking for something that dangles down from a high shelf and tolerates a dim room. Happy to take a cutting.",
+      "category": "houseplant",
+      "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "type": "wanted",
+      "status": "available",
+      "createdAt": "2026-09-20T16:05:38.783Z",
+      "images": []
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T16:05:38.783Z",
+    "version": 1,
+    "sequenceNumber": 63
+  },
+  {
+    "id": "b8500092-f302-4eb6-aca2-132bff1e5cca",
+    "type": "TRADE_INITIATED",
+    "payload": {
+      "id": "e03bdced-a226-48a3-8ed1-4e9bb6622913",
+      "offerId": "d00e1746-dae7-4aea-9d5c-21dfdf020dda",
+      "wantedId": "faf773f3-5819-4193-8b56-67fb09406e85",
+      "offerMemberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+      "wantedMemberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "action": "notify",
+      "score": 2,
+      "confidence": 1,
+      "status": "proposed",
+      "createdAt": "2026-09-20T16:05:39.660Z"
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T16:05:39.660Z",
+    "version": 1,
+    "sequenceNumber": 64
+  },
+  {
+    "id": "40af4dfc-d24b-492c-8743-cf983418b2a7",
+    "type": "TRADE_INITIATED",
+    "payload": {
+      "id": "733c3a24-9625-48f5-a3f2-67d59c24a09d",
+      "offerId": "ab48e46e-1b8d-47b6-a611-52246d2b0434",
+      "wantedId": "faf773f3-5819-4193-8b56-67fb09406e85",
+      "offerMemberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+      "wantedMemberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "action": "suggest",
+      "score": 0.86,
+      "confidence": 0.61,
+      "status": "proposed",
+      "createdAt": "2026-09-20T16:05:39.663Z"
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T16:05:39.663Z",
+    "version": 1,
+    "sequenceNumber": 65
+  },
+  {
+    "id": "b6453727-35e3-4688-8f94-4744d5a38771",
+    "type": "TRADE_INITIATED",
+    "payload": {
+      "id": "a7c7092b-d676-4b66-8232-efeb400315ea",
+      "offerId": "ada69178-2127-43ff-91d1-719d21ed4588",
+      "wantedId": "faf773f3-5819-4193-8b56-67fb09406e85",
+      "offerMemberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+      "wantedMemberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "action": "suggest",
+      "score": 0.66,
+      "confidence": 0.46,
+      "status": "proposed",
+      "createdAt": "2026-09-20T16:05:39.664Z"
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T16:05:39.664Z",
+    "version": 1,
+    "sequenceNumber": 66
+  },
+  {
+    "id": "e029fe3c-dd8d-4d80-83ac-e84922957b26",
+    "type": "MESSAGE_SENT",
+    "payload": {
+      "id": "c54387cd-0b1e-41d7-84d4-755d49ae3f60",
+      "fromId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+      "toIds": [
+        "704cceb2-a009-42f6-b116-2b7a7d9ce1e8"
+      ],
+      "content": "Can you meet Saturday at 10 to swap the pothos cutting for your aloe? I can bring it to the market.",
+      "tradeId": null,
+      "timestamp": "2026-09-20T16:06:08.378Z",
+      "readBy": [],
+      "urgency": 2,
+      "tradeRelated": 0.97
+    },
+    "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+    "timestamp": "2026-09-20T16:06:08.378Z",
+    "version": 1,
+    "sequenceNumber": 67
+  },
+  {
+    "id": "809cb4c5-f375-43a5-b09e-d805c211c686",
+    "type": "MESSAGE_SENT",
+    "payload": {
+      "id": "335f0c47-4bb4-416b-826f-6cc3b064f20d",
+      "fromId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+      "toIds": [
+        "704cceb2-a009-42f6-b116-2b7a7d9ce1e8"
+      ],
+      "content": "thanks for the tip about the thyme, it worked!",
+      "tradeId": null,
+      "timestamp": "2026-09-20T16:06:08.756Z",
+      "readBy": [],
+      "urgency": 0,
+      "tradeRelated": 0.02
+    },
+    "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+    "timestamp": "2026-09-20T16:06:08.756Z",
+    "version": 1,
+    "sequenceNumber": 68
+  },
+  {
+    "id": "5dd4bec8-7341-47cb-bcf6-4f52d84ec52f",
+    "type": "MESSAGE_SENT",
+    "payload": {
+      "id": "6bf4da68-3165-4dd4-82be-2a3db911a7b0",
+      "fromId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+      "toIds": [
+        "704cceb2-a009-42f6-b116-2b7a7d9ce1e8"
+      ],
+      "content": "Hi! Just joined, your garden sounds lovely. What do you grow?",
+      "tradeId": null,
+      "timestamp": "2026-09-20T16:06:09.113Z",
+      "readBy": [],
+      "urgency": 1.48,
+      "tradeRelated": 0.01
+    },
+    "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+    "timestamp": "2026-09-20T16:06:09.113Z",
+    "version": 1,
+    "sequenceNumber": 69
+  },
+  {
+    "id": "908b4a8e-5a08-4047-b402-6a445f551da3",
+    "type": "MESSAGE_SENT",
+    "payload": {
+      "id": "3c77af43-7e69-4ea2-acac-5a3248612528",
+      "fromId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+      "toIds": [
+        "704cceb2-a009-42f6-b116-2b7a7d9ce1e8"
+      ],
+      "content": "I need to cancel our trade tomorrow, sorry - can we reschedule this week?",
+      "tradeId": null,
+      "timestamp": "2026-09-20T16:06:09.455Z",
+      "readBy": [],
+      "urgency": 2,
+      "tradeRelated": 0.88
+    },
+    "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+    "timestamp": "2026-09-20T16:06:09.455Z",
+    "version": 1,
+    "sequenceNumber": 70
+  },
+  {
+    "id": "9ab587c9-bd4a-4d2b-9370-f7a407d6ef45",
+    "type": "MESSAGE_SENT",
+    "payload": {
+      "id": "a0346b34-8dbf-43ee-a5f0-a1890759192a",
+      "fromId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+      "toIds": [
+        "704cceb2-a009-42f6-b116-2b7a7d9ce1e8"
+      ],
+      "content": "Yes, happy to trade the pothos cutting for your shelf spot - when suits you?",
+      "tradeId": "e03bdced-a226-48a3-8ed1-4e9bb6622913",
+      "timestamp": "2026-09-20T16:07:36.324Z",
+      "readBy": [],
+      "urgency": 2,
+      "tradeRelated": 0.97
+    },
+    "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+    "timestamp": "2026-09-20T16:07:37.001Z",
+    "version": 1,
+    "sequenceNumber": 71
+  },
+  {
+    "id": "707e5824-5f21-412f-9397-b5d2c1e03ba0",
+    "type": "MESSAGE_SENT",
+    "payload": {
+      "id": "53b6567b-b85d-4999-a473-d9e74219c772",
+      "fromId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+      "toIds": [
+        "704cceb2-a009-42f6-b116-2b7a7d9ce1e8"
+      ],
+      "content": "Lovely weather today, the garden is finally waking up.",
+      "tradeId": null,
+      "timestamp": "2026-09-20T16:07:37.330Z",
+      "readBy": [],
+      "urgency": 0.11,
+      "tradeRelated": 0.01
+    },
+    "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+    "timestamp": "2026-09-20T16:07:37.330Z",
+    "version": 1,
+    "sequenceNumber": 72
+  },
+  {
+    "id": "66fccca9-cbb8-4963-815c-9b763b93e6fc",
+    "type": "MESSAGE_SENT",
+    "payload": {
+      "id": "ea7e2ca0-7137-4a3e-aac4-e0600341dd16",
+      "fromId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "toIds": [
+        "c551d105-1246-4706-a311-a2146f0ed7a7"
+      ],
+      "content": "i'd like the burros tail please",
+      "tradeId": null,
+      "timestamp": "2026-09-20T16:14:01.474Z",
+      "readBy": [],
+      "urgency": 1.83,
+      "tradeRelated": 0.23
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T16:14:01.474Z",
+    "version": 1,
+    "sequenceNumber": 73
+  },
+  {
+    "id": "1f8807bb-909a-4291-ada0-81ed4a28df27",
+    "type": "MESSAGE_SENT",
+    "payload": {
+      "id": "aa7b2055-9c44-408f-a5d9-17e504457aeb",
+      "fromId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "toIds": [
+        "c551d105-1246-4706-a311-a2146f0ed7a7"
+      ],
+      "content": "Hi Brigitte Rau, I saw your Golden Pothos and it looks like a good match for the Trailing plant for a shelf I'm after. Would you like to trade?",
+      "tradeId": null,
+      "timestamp": "2026-09-20T16:19:27.382Z",
+      "readBy": [],
+      "urgency": 1.84,
+      "tradeRelated": 0.52
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T16:19:27.382Z",
+    "version": 1,
+    "sequenceNumber": 74
+  },
+  {
+    "id": "b61314d7-3dae-47c6-8a9d-0c188c671cde",
+    "type": "MESSAGE_SENT",
+    "payload": {
+      "id": "616703b1-09f6-4fe0-8a1b-089685a60e62",
+      "fromId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "toIds": [
+        "c551d105-1246-4706-a311-a2146f0ed7a7"
+      ],
+      "content": "Hi Brigitte Rau, I saw your Golden Pothos and it looks like a good match for the Trailing plant for a shelf I'm after. Would you like to trade?",
+      "tradeId": "e03bdced-a226-48a3-8ed1-4e9bb6622913",
+      "timestamp": "2026-09-20T16:20:28.730Z",
+      "readBy": [],
+      "urgency": 1.85,
+      "tradeRelated": 0.99
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T16:20:29.347Z",
+    "version": 1,
+    "sequenceNumber": 75
+  },
+  {
+    "id": "f3fd3f9e-43ed-4192-b5cb-9590aa69149c",
+    "type": "MESSAGE_SENT",
+    "payload": {
+      "id": "2c2f2486-f62c-4165-9e8a-fce78b973def",
+      "fromId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "toIds": [
+        "c551d105-1246-4706-a311-a2146f0ed7a7"
+      ],
+      "content": "How often do you water your ferns in winter? Mine keep browning at the tips.",
+      "tradeId": null,
+      "timestamp": "2026-09-20T16:20:29.694Z",
+      "readBy": [],
+      "urgency": 1.84,
+      "tradeRelated": 0.01
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T16:20:29.694Z",
+    "version": 1,
+    "sequenceNumber": 76
+  },
+  {
+    "id": "3bc81c9a-592b-4c18-ab20-45d9d9ffa469",
+    "type": "MESSAGE_SENT",
+    "payload": {
+      "id": "29535e67-e1d3-4952-a48f-65d87fab4185",
+      "fromId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "toIds": [
+        "c551d105-1246-4706-a311-a2146f0ed7a7"
+      ],
+      "content": "Hi Brigitte Rau, I saw your Golden Pothos and it looks like a good match for the Trailing plant for a shelf I'm after. Would you like to trade?",
+      "tradeId": "e03bdced-a226-48a3-8ed1-4e9bb6622913",
+      "timestamp": "2026-09-20T16:36:50.955Z",
+      "readBy": [],
+      "urgency": 1.81,
+      "tradeRelated": 0.99
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T16:36:51.599Z",
+    "version": 1,
+    "sequenceNumber": 77
+  },
+  {
+    "id": "6e03c9a1-2747-434d-b650-76d03efc7f5b",
+    "type": "MESSAGE_READ",
+    "payload": {
+      "messageId": "ea7e2ca0-7137-4a3e-aac4-e0600341dd16",
+      "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7"
+    },
+    "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+    "timestamp": "2026-09-20T16:36:57.596Z",
+    "version": 1,
+    "sequenceNumber": 78
+  },
+  {
+    "id": "408c28bf-5375-4c02-9408-64953492f345",
+    "type": "MESSAGE_READ",
+    "payload": {
+      "messageId": "aa7b2055-9c44-408f-a5d9-17e504457aeb",
+      "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7"
+    },
+    "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+    "timestamp": "2026-09-20T16:36:57.607Z",
+    "version": 1,
+    "sequenceNumber": 79
+  },
+  {
+    "id": "3b9a934a-b648-46da-94c7-7f0128c3856c",
+    "type": "MESSAGE_READ",
+    "payload": {
+      "messageId": "616703b1-09f6-4fe0-8a1b-089685a60e62",
+      "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7"
+    },
+    "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+    "timestamp": "2026-09-20T16:36:57.615Z",
+    "version": 1,
+    "sequenceNumber": 80
+  },
+  {
+    "id": "1bcd57b0-8f19-4b3b-8934-708dcde2580a",
+    "type": "MESSAGE_READ",
+    "payload": {
+      "messageId": "2c2f2486-f62c-4165-9e8a-fce78b973def",
+      "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7"
+    },
+    "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+    "timestamp": "2026-09-20T16:36:57.626Z",
+    "version": 1,
+    "sequenceNumber": 81
+  },
+  {
+    "id": "887849af-1ebd-4200-977b-5c78c9f27ab7",
+    "type": "MESSAGE_READ",
+    "payload": {
+      "messageId": "29535e67-e1d3-4952-a48f-65d87fab4185",
+      "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7"
+    },
+    "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+    "timestamp": "2026-09-20T16:36:57.636Z",
+    "version": 1,
+    "sequenceNumber": 82
+  },
+  {
+    "id": "6eff6b9d-6d0f-4d39-baba-3973336ac100",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "577f3e8b-cb54-4581-b750-2205572d1c5d",
+      "name": "Photo Test Fern",
+      "description": "A fern used to check that a supplied photo loads over the generated placeholder.",
+      "category": "houseplant",
+      "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T16:51:16.720Z",
+      "images": {}
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T16:51:16.720Z",
+    "version": 1,
+    "sequenceNumber": 83
+  },
+  {
+    "id": "37bc1fb7-96fe-4bc2-98cf-d4a5035d5a81",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "c5fec9a8-9c1d-4132-a6ce-04f11c38403f",
+      "name": "Broken Photo Fern",
+      "description": "A listing whose photo URL does not resolve, to check the placeholder survives.",
+      "category": "herb",
+      "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T16:51:16.801Z",
+      "images": {}
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T16:51:16.801Z",
+    "version": 1,
+    "sequenceNumber": 84
+  },
+  {
+    "id": "fd3734b2-fcf8-4418-ba52-2867d3875a6e",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "dcecb3ea-8e89-40e4-8864-7ee64202878a",
+      "name": "Nasty URL Fern",
+      "description": "A listing with a non-http scheme, which must never be stored.",
+      "category": "herb",
+      "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T16:51:16.895Z",
+      "images": {}
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T16:51:16.895Z",
+    "version": 1,
+    "sequenceNumber": 85
+  },
+  {
+    "id": "9bdf8e70-3f0e-4145-9bd6-96fdb48f9924",
+    "type": "PLANT_REMOVED",
+    "payload": {
+      "plantId": "dcecb3ea-8e89-40e4-8864-7ee64202878a"
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T16:52:17.369Z",
+    "version": 1,
+    "sequenceNumber": 86
+  },
+  {
+    "id": "09db6d6f-6789-4718-9008-a6e21c2e770b",
+    "type": "PLANT_REMOVED",
+    "payload": {
+      "plantId": "c5fec9a8-9c1d-4132-a6ce-04f11c38403f"
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T16:52:17.454Z",
+    "version": 1,
+    "sequenceNumber": 87
+  },
+  {
+    "id": "6b94ea7c-e3ee-4167-8575-6d2c2c7279e7",
+    "type": "PLANT_REMOVED",
+    "payload": {
+      "plantId": "577f3e8b-cb54-4581-b750-2205572d1c5d"
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T16:52:17.541Z",
+    "version": 1,
+    "sequenceNumber": 88
+  },
+  {
+    "id": "83cdaa83-2143-4d31-80f1-452e01da4021",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "6b90c717-6d8d-4aae-8b52-f37046723ec1",
+      "name": "Boston Fern",
+      "description": "Arching fronds, likes a humid bathroom and indirect light. Divides easily in spring.",
+      "category": "houseplant",
+      "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T16:52:17.650Z",
+      "images": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/30/Boston_Fern_%282873392811%29.png/500px-Boston_Fern_%282873392811%29.png"
+      ]
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T16:52:17.650Z",
+    "version": 1,
+    "sequenceNumber": 89
   }
 ]

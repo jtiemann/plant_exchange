@@ -1,0 +1,9 @@
+node_modules
+
+# Secrets - never commit these
+.env
+.env.local
+.env.*.local
+
+# Event store backups (see docs/RUNBOOK.md)
+events.backup.*.json
