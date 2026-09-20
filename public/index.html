@@ -632,6 +632,8 @@
                     currentFilter: 'all',
                     currentTab: 'offer',
                     searchTerm: '',
+                    searchResults: null,   // server-ranked hits, null = use local view
+                    searchPending: false,
                     selectedRecipients: new Set(),
                     currentMemberId: null,
                     notifications: {}
@@ -799,7 +801,8 @@
                 // Search box
                 document.getElementById('searchBox').addEventListener('input', (e) => {
                     this.state.searchTerm = e.target.value;
-                    this.renderPlants();
+                    this.renderPlants();          // instant substring pass
+                    this.scheduleSemanticSearch(); // ranked pass, debounced
                 });
 
                 // Messages member selector
@@ -1026,6 +1029,46 @@
                 document.querySelector(`[data-filter="${filter}"]`).classList.add('active');
                 
                 this.renderPlants();
+                if (this.state.searchTerm.trim()) this.scheduleSemanticSearch();
+            }
+
+            // Semantic search runs on the server, where the API key lives. The
+            // local substring filter stays as the instant pass so typing still
+            // feels immediate while the ranked results are in flight.
+            scheduleSemanticSearch() {
+                clearTimeout(this._searchTimer);
+                const term = this.state.searchTerm.trim();
+
+                if (!term) {
+                    this.state.searchResults = null;
+                    this.state.searchPending = false;
+                    this.renderPlants();
+                    return;
+                }
+
+                this.state.searchPending = true;
+                this._searchTimer = setTimeout(() => this.runSemanticSearch(term), 350);
+            }
+
+            async runSemanticSearch(term) {
+                const seq = (this._searchSeq = (this._searchSeq || 0) + 1);
+                const params = new URLSearchParams({ search: term });
+                if (this.state.currentFilter !== 'all') params.set('type', this.state.currentFilter);
+
+                try {
+                    const response = await fetch('/api/plants?' + params);
+                    if (!response.ok) throw new Error('search failed: ' + response.status);
+                    const results = await response.json();
+                    if (seq !== this._searchSeq) return;  // a newer search superseded this one
+                    this.state.searchResults = Array.isArray(results) ? results : [];
+                } catch (error) {
+                    if (seq !== this._searchSeq) return;
+                    console.warn('Semantic search unavailable, showing substring matches:', error.message);
+                    this.state.searchResults = null;  // fall back to the local view
+                }
+
+                this.state.searchPending = false;
+                this.renderPlants();
             }
 
             async loadStats() {
@@ -1174,26 +1217,36 @@
             renderPlants() {
                 const container = document.getElementById('plantsGrid');
                 
-                // Filter plants based on current filter and search term
-                let filteredPlants = this.state.plants;
-                
-                if (this.state.currentFilter !== 'all') {
-                    filteredPlants = filteredPlants.filter(plant => plant.type === this.state.currentFilter);
+                const term = this.state.searchTerm.trim();
+                let filteredPlants;
+
+                if (term && this.state.searchResults) {
+                    // Server-ranked results, already type-filtered by the API.
+                    filteredPlants = this.state.searchResults;
+                } else {
+                    filteredPlants = this.state.plants;
+
+                    if (this.state.currentFilter !== 'all') {
+                        filteredPlants = filteredPlants.filter(plant => plant.type === this.state.currentFilter);
+                    }
+
+                    if (term) {
+                        const searchLower = term.toLowerCase();
+                        filteredPlants = filteredPlants.filter(plant =>
+                            plant.name.toLowerCase().includes(searchLower) ||
+                            plant.description.toLowerCase().includes(searchLower) ||
+                            plant.category.toLowerCase().includes(searchLower)
+                        );
+                    }
                 }
-                
-                if (this.state.searchTerm) {
-                    const searchLower = this.state.searchTerm.toLowerCase();
-                    filteredPlants = filteredPlants.filter(plant =>
-                        plant.name.toLowerCase().includes(searchLower) ||
-                        plant.description.toLowerCase().includes(searchLower) ||
-                        plant.category.toLowerCase().includes(searchLower)
-                    );
-                }
-                
+
                 container.innerHTML = '';
-                
+
                 if (filteredPlants.length === 0) {
-                    container.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: #666; margin: 40px 0;">No plants found matching your criteria.</p>';
+                    const message = this.state.searchPending
+                        ? 'Searching&hellip;'
+                        : 'No plants found matching your criteria.';
+                    container.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: #666; margin: 40px 0;">' + message + '</p>';
                     return;
                 }
                 

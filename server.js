@@ -1,6 +1,8 @@
 // The Plant Exchange - Event-Driven Plant Trading Platform
 // Modern architecture with RxJS, Ramda, Event Sourcing, and Reactive Streams
 
+require('dotenv').config();
+
 const express = require('express');
 const fs = require('fs').promises;
 const path = require('path');
@@ -8,6 +10,114 @@ const { v4: uuidv4 } = require('uuid');
 const R = require('ramda');
 const { Subject, BehaviorSubject, merge, fromEvent, timer } = require('rxjs');
 const { map, filter, scan, distinctUntilChanged, shareReplay, tap } = require('rxjs/operators');
+const { TypeSafeClient, choice, noul } = require('@typesafe-ai/sdk');
+
+// =============================================================================
+// CONFIGURATION
+// =============================================================================
+
+const TYPESAFE_API_KEY = process.env.TYPESAFE_API_KEY || '';
+
+const hasTypeSafeKey = () => TYPESAFE_API_KEY.length > 0;
+
+// Jev-backed features (semantic search, offer/want matching) need a TypeSafe key.
+// Call this at the top of any code path that talks to the API, so a missing key
+// surfaces as this message instead of an opaque 401 from the SDK.
+const requireTypeSafeKey = () => {
+  if (!hasTypeSafeKey()) {
+    throw new Error(
+      'TYPESAFE_API_KEY is not set. Copy .env.example to .env and add your key ' +
+      'from https://console.typesafe.ai, then restart the server.'
+    );
+  }
+  return TYPESAFE_API_KEY;
+};
+
+// =============================================================================
+// SEMANTIC SEARCH (TypeSafe / Jev)
+// =============================================================================
+
+// A Choice question accepts at most 255 options. Past that we rank the newest
+// 255 listings; splitting into a two-pass window search is the fix when the
+// catalogue outgrows it.
+const MAX_CHOICE_OPTIONS = 255;
+
+// Tuned against the listings in events.json: irrelevant queries scored ~0.02,
+// good matches 0.89-0.96. Re-tune these as the catalogue grows.
+const EXISTS_THRESHOLD = 0.35;
+
+// Choice probabilities are competitive - they answer "which one is best", not
+// "which are relevant". Two equally good matches split ~0.55/0.45, while a
+// good-vs-irrelevant pair goes ~0.91/0.09. A floor of 0.15 of the top hit keeps
+// both halves of a genuine tie and still drops the tail.
+const RELEVANCE_FLOOR = 0.15;
+
+let typeSafeClient = null;
+const getTypeSafeClient = () => {
+  if (!typeSafeClient) {
+    typeSafeClient = new TypeSafeClient({ apiKey: requireTypeSafeKey() });
+  }
+  return typeSafeClient;
+};
+
+const substringSearch = (plants, query) => {
+  const text = query.toLowerCase();
+  return plants.filter(plant =>
+    plant.name.toLowerCase().includes(text) ||
+    plant.description.toLowerCase().includes(text) ||
+    plant.category.toLowerCase().includes(text)
+  );
+};
+
+// One Jev request answers both questions over the same state. The Choice ranks
+// every listing; the Noul says whether anything matches at all. Choice
+// probabilities always sum to 1, so without the Noul a search for "mountain
+// bike" would still return whichever plant is least irrelevant.
+const semanticSearch = async (plants, query) => {
+  const shortlist = plants.slice(0, MAX_CHOICE_OPTIONS);
+  const ids = shortlist.map((_, i) => `P${String(i).padStart(3, '0')}`);
+  const state = shortlist
+    .map((plant, i) => `${ids[i]}| ${plant.name} (${plant.category}, ${plant.type}): ${plant.description}`)
+    .join('\n');
+
+  const response = await getTypeSafeClient().systemOne({
+    state,
+    questions: {
+      where: choice(`Which listing best matches: "${query}"?`,
+        Object.fromEntries(ids.map(id => [id, null]))),
+      exists: noul(`Does any listing plausibly match: "${query}"?`, {
+        true: 'At least one listing is a plausible match for what the searcher wants',
+        false: 'No listing is relevant to this search'
+      })
+    }
+  });
+
+  if (response.answers.exists.noul < EXISTS_THRESHOLD) return [];
+
+  const probabilities = response.answers.where.probabilities;
+  const ranked = shortlist
+    .map((plant, i) => ({ ...plant, relevance: probabilities[ids[i]] || 0 }))
+    .sort((a, b) => b.relevance - a.relevance);
+
+  // Relative floor, so the cutoff holds as probability mass spreads over a
+  // larger catalogue.
+  const best = ranked.length ? ranked[0].relevance : 0;
+  return ranked.filter(plant => plant.relevance >= best * RELEVANCE_FLOOR);
+};
+
+// The same query over an unchanged catalogue is a free repeat.
+const SEARCH_CACHE_MAX = 200;
+const searchCache = new Map();
+
+const cacheKey = (query, plants) => `${query}\u0000${plants.map(p => p.id).join(',')}`;
+
+const cacheSearch = (key, results) => {
+  if (searchCache.size >= SEARCH_CACHE_MAX) {
+    searchCache.delete(searchCache.keys().next().value);
+  }
+  searchCache.set(key, results);
+  return results;
+};
 
 // =============================================================================
 // DOMAIN MODELS & TYPES
@@ -357,23 +467,34 @@ class PlantExchangeService {
   }
 
   // Query methods using functional composition
-  searchPlants(criteria) {
+  // Query methods using functional composition
+  async searchPlants(criteria) {
     const currentPlants = Array.from(this.projections.plants$.value.values());
-    
-    return R.pipe(
+
+    // Code owns the deterministic filters. The model only ever sees the shortlist.
+    const shortlist = R.pipe(
       R.filter(plant => {
         if (criteria.type && plant.type !== criteria.type) return false;
         if (criteria.category && plant.category !== criteria.category) return false;
-        if (criteria.search) {
-          const searchText = criteria.search.toLowerCase();
-          return plant.name.toLowerCase().includes(searchText) ||
-                 plant.description.toLowerCase().includes(searchText);
-        }
         return true;
       }),
       R.sortBy(R.prop('createdAt')),
       R.reverse
     )(currentPlants);
+
+    if (!criteria.search) return shortlist;
+    if (!hasTypeSafeKey()) return substringSearch(shortlist, criteria.search);
+
+    const key = cacheKey(criteria.search, shortlist);
+    if (searchCache.has(key)) return searchCache.get(key);
+
+    try {
+      return cacheSearch(key, await semanticSearch(shortlist, criteria.search));
+    } catch (error) {
+      console.error(`Semantic search failed (${error.constructor.name}): ${error.message}`);
+      console.error('   Falling back to substring matching for this query.');
+      return substringSearch(shortlist, criteria.search);
+    }
   }
 
   getMemberMessages(memberId) {
@@ -551,9 +672,13 @@ class PlantExchangeServer {
       }
     });
 
-    this.app.get('/api/plants', (req, res) => {
-      const results = this.service.searchPlants(req.query);
-      res.json(results);
+    this.app.get('/api/plants', async (req, res) => {
+      try {
+        const results = await this.service.searchPlants(req.query);
+        res.json(results);
+      } catch (error) {
+        res.status(500).json({ error: error.message });
+      }
     });
 
     this.app.delete('/api/plants/:plantId', async (req, res) => {
@@ -632,6 +757,11 @@ class PlantExchangeServer {
     // Ensure projections are rebuilt from existing events
     this.projections.rebuildFromHistory();
     
+    if (!hasTypeSafeKey()) {
+      console.warn('⚠️  TYPESAFE_API_KEY is not set - Jev-backed features are disabled.');
+      console.warn('   Copy .env.example to .env and add your key to enable them.');
+    }
+
     this.app.listen(port, () => {
       console.log(`🌱 The Plant Exchange is running on http://localhost:${port}`);
       console.log(`📊 Event Store contains ${this.eventStore.getEvents().length} events`);
@@ -663,5 +793,7 @@ module.exports = {
   createEvent,
   createMember,
   createPlant,
-  createMessage
+  createMessage,
+  hasTypeSafeKey,
+  requireTypeSafeKey
 };
