@@ -253,6 +253,33 @@ second request rather than another question in the first because the options
 depend on the earlier answer. Linking below `LINK_CONFIDENCE` is declined, since
 attaching a message to the wrong trade is worse than leaving `tradeId` null.
 
+## Plant imagery
+
+Every card draws its own image before any network request happens. An inline SVG
+glyph - a motif per category, its hue shifted by a hash of the plant name - is
+written as part of the card markup, so the image area is filled in the same paint
+as the text. No request, no decode, nothing to wait for.
+
+A real photo, where a listing has one, layers over that glyph:
+
+| Technique | Why |
+| --- | --- |
+| fixed 160px image height | the card's height is known before anything loads, so CLS stays at 0 |
+| `loading="lazy"` | only listings actually on screen cost bytes |
+| `content-visibility: auto` | the browser skips layout and paint for off-screen cards entirely |
+| fade in after `decode()` | a whole image appears at once, rather than painting in strips |
+| `error` removes the `<img>` | a dead URL falls back to the glyph instead of a broken-image box |
+
+Photos are hotlinked from Wikimedia, looked up once per species through the
+Wikipedia API and stored in `scripts/seed.js`. Two details matter if you refetch
+them: common names are ambiguous, so anything that could resolve wrongly - Rocket
+is a spacecraft, Mint is a dozen species - is mapped to its article by hand; and
+Wikimedia only serves the exact thumbnail width the API generated, so ask the API
+for the size you want rather than rewriting the URL. Asking for 400px instead of
+the default cut a sample of five images from 1625 KB to 518 KB.
+
+A deployment should mirror these rather than hotlink them.
+
 ## Still unbuilt
 
 All four judgments the codebase was shaped for are live. What the domain still
@@ -275,5 +302,6 @@ lacks is the other half of a trade:
 - **SSE staleness during search.** A new listing arriving while a search is displayed does not refresh the results until the user retypes. Clearing `state.searchResults` in the SSE handler fixes it but fires an API call on every broadcast, so the trade-off needs a deliberate decision.
 - **Thin test coverage.** 20 cases across two files cover the projections and the rules around matching. The judgments themselves are not tested - they cost a live API call and return probabilities. Run with `npm test`.
 - **No auth.** Member identity is a dropdown selection. Anyone can act as anyone.
+- **Photos are hotlinked** from Wikimedia and supplied as URLs. There is no upload, no mirroring, and no size negotiation beyond what was fetched.
 - **Full-file rewrite per event**, as above.
 - **The event store path is not configurable** by environment; it is a default parameter resolved against the process working directory. `PORT` now works.

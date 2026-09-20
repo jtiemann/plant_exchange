@@ -94,7 +94,17 @@ const createMember = (name, email, location, bio = '') => ({
   reputation: 0
 });
 
-const createPlant = (name, description, category, memberId, type = 'offer') => ({
+// Only http(s) URLs are kept, so a javascript: or data: URL can never reach an
+// <img src>. Returns an array because that is the shape `images` holds. Every
+// card draws a generated placeholder regardless, so a rejected or broken URL
+// never leaves a blank space.
+const imageList = value => {
+  const url = String(value || '').trim();
+  const scheme = url.slice(0, 8).toLowerCase();
+  return scheme.startsWith('http://') || scheme.startsWith('https://') ? [url] : [];
+};
+
+const createPlant = (name, description, category, memberId, type = 'offer', imageUrl = '') => ({
   id: uuidv4(),
   name,
   description,
@@ -103,7 +113,7 @@ const createPlant = (name, description, category, memberId, type = 'offer') => (
   type, // 'offer' or 'wanted'
   status: 'available',
   createdAt: new Date().toISOString(),
-  images: []
+  images: imageList(imageUrl)
 });
 
 const createMessage = (fromId, toIds, content, tradeId = null) => ({
@@ -424,7 +434,8 @@ class PlantExchangeService {
       plantData.description,
       plantData.category,
       memberId,
-      'offer'
+      'offer',
+      plantData.imageUrl
     );
 
     const event = createEvent(EventTypes.PLANT_OFFERED, plant, memberId);
@@ -437,7 +448,8 @@ class PlantExchangeService {
       plantData.description,
       plantData.category,
       memberId,
-      'wanted'
+      'wanted',
+      plantData.imageUrl
     );
 
     const event = createEvent(EventTypes.PLANT_WANTED, plant, memberId);
@@ -962,6 +974,7 @@ module.exports = {
   createMessage,
   createTrade,
   eligibleCounterparties,
+  imageList,
   hasTypeSafeKey,
   requireTypeSafeKey
 };

@@ -23,6 +23,63 @@ const SEED_MEMBERS = [
   ['Avery Fern', 'avery.fern@example.invalid', 'Portland, OR', 'Propagates far more than she can keep.'],
   ['Kit Marlow', 'kit.marlow@example.invalid', 'Bristol, UK', 'Allotment grower, heavy on the herbs.'],
 ];
+
+// Photo for each plant, from Wikimedia via the Wikipedia API. Keyed by name so
+// duplicate listings of the same plant share one image, and a name with no
+// entry simply falls back to the generated placeholder the card draws anyway.
+//
+// These are hotlinked. Fine for a local demo; a deployment should mirror them.
+const IMAGES = {
+  "Monstera Deliciosa": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2e/Monstera_deliciosa2.jpg/500px-Monstera_deliciosa2.jpg",
+  "Golden Pothos": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/62/Money_Plant_%28Epipremnum_aureum%29_4.jpg/500px-Money_Plant_%28Epipremnum_aureum%29_4.jpg",
+  "Snake Plant": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fb/Snake_Plant_%28Sansevieria_trifasciata_%27Laurentii%27%29.jpg/500px-Snake_Plant_%28Sansevieria_trifasciata_%27Laurentii%27%29.jpg",
+  "ZZ Plant": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cf/Zamioculcas_zamiifolia_1.jpg/500px-Zamioculcas_zamiifolia_1.jpg",
+  "Fiddle Leaf Fig": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/84/Starr_031108-0130_Ficus_lyrata.jpg/500px-Starr_031108-0130_Ficus_lyrata.jpg",
+  "Rubber Plant": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/16/Ficus_elastica_leaves_02.JPG/500px-Ficus_elastica_leaves_02.JPG",
+  "Spider Plant": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b1/Hierbabuena_0611_Revised.jpg/500px-Hierbabuena_0611_Revised.jpg",
+  "Peace Lily": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bd/Spathiphyllum_cochlearispathum_RTBG.jpg/500px-Spathiphyllum_cochlearispathum_RTBG.jpg",
+  "Philodendron Brasil": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bb/Philodendron_scandens_subsp_oxycardium2.jpg/500px-Philodendron_scandens_subsp_oxycardium2.jpg",
+  "Chinese Money Plant": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6d/Pilea_peperomioides_Chinese_money_plant.jpg/500px-Pilea_peperomioides_Chinese_money_plant.jpg",
+  "Calathea Orbifolia": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fa/Calathea_orbifolia_2.jpg/500px-Calathea_orbifolia_2.jpg",
+  "Bird of Paradise": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1c/Strelitzia_larger.jpg/500px-Strelitzia_larger.jpg",
+  "Jade Plant": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5a/Crassula_ovata_700.jpg/500px-Crassula_ovata_700.jpg",
+  "Echeveria": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/85/Echeveria_elegans_-_1.jpg/500px-Echeveria_elegans_-_1.jpg",
+  "String of Pearls": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fd/Senecio_rowleyanus_leaves.jpg/500px-Senecio_rowleyanus_leaves.jpg",
+  "Rosemary": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a3/Rosemary_in_bloom.JPG/500px-Rosemary_in_bloom.JPG",
+  "Mint": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4d/Mentha_spicata-IMG_6186.jpg/500px-Mentha_spicata-IMG_6186.jpg",
+  "Thyme": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ea/Thyme-Bundle.jpg/500px-Thyme-Bundle.jpg",
+  "Lemon Balm": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/70/Lemon_balm_plant.jpg/500px-Lemon_balm_plant.jpg",
+  "Sage": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5a/Salvia_officinalis0.jpg/500px-Salvia_officinalis0.jpg",
+  "Chives": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/49/Allium_schoenoprasum_-_Bombus_lapidarius_-_Tootsi.jpg/500px-Allium_schoenoprasum_-_Bombus_lapidarius_-_Tootsi.jpg",
+  "Lemon Thyme": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/29/Starr_070906-8846_Thymus_citriodorus.jpg/500px-Starr_070906-8846_Thymus_citriodorus.jpg",
+  "Cherry Tomato": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/10/Tomates_cerises_Luc_Viatour.jpg/500px-Tomates_cerises_Luc_Viatour.jpg",
+  "Padron Pepper": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/54/Pementos_de_Padron.jpg/500px-Pementos_de_Padron.jpg",
+  "Rainbow Chard": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/45/Chard_%28Beta_vulgaris_var_cicla%29.jpg/500px-Chard_%28Beta_vulgaris_var_cicla%29.jpg",
+  "Dahlia": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ab/Dahlia_x_hybrida.jpg/500px-Dahlia_x_hybrida.jpg",
+  "Cosmos": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e0/Cosmos_bipinnatus%2C_a_wild_Cosmos_%289461227273%29.jpg/500px-Cosmos_bipinnatus%2C_a_wild_Cosmos_%289461227273%29.jpg",
+  "Sweet Pea": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d7/Sweet_Pea-7.jpg/500px-Sweet_Pea-7.jpg",
+  "Japanese Maple": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d6/Acer_palmatum0.jpg/500px-Acer_palmatum0.jpg",
+  "Olive Tree": "https://upload.wikimedia.org/wikipedia/commons/8/84/Olivesfromjordan.jpg",
+  "Fig Tree": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2e/Ficus_carica_L%2C_1771.jpg/500px-Ficus_carica_L%2C_1771.jpg",
+  "Hydrangea": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fc/Hydrangea_arborescens_139866012.jpg/500px-Hydrangea_arborescens_139866012.jpg",
+  "Elderberry": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a9/Sambucus-berries.jpg/500px-Sambucus-berries.jpg",
+  "Boxwood": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fd/Buxus_sempervirens.jpg/500px-Buxus_sempervirens.jpg",
+  "Venus Flytrap": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/37/Venus_Flytrap_showing_trigger_hairs.jpg/500px-Venus_Flytrap_showing_trigger_hairs.jpg",
+  "Aloe Vera": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4b/Aloe_vera_flower_inset.png/500px-Aloe_vera_flower_inset.png",
+  "Haworthia": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b9/Haworthia_cymbiformis_1.jpg/500px-Haworthia_cymbiformis_1.jpg",
+  "Christmas Cactus": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ef/Cactus_de_no%C3%ABl_rev.jpg/500px-Cactus_de_no%C3%ABl_rev.jpg",
+  "Burros Tail": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e5/Donkey%27s_tail_in_bloom_March_06.jpg/500px-Donkey%27s_tail_in_bloom_March_06.jpg",
+  "Basil": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/97/Ocimum_basilicum_8zz.jpg/500px-Ocimum_basilicum_8zz.jpg",
+  "Sugar Snap Pea": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8a/Sugar_Snap_Pea.JPG/500px-Sugar_Snap_Pea.JPG",
+  "Courgette": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/92/CSA-Striped-Zucchini.jpg/500px-CSA-Striped-Zucchini.jpg",
+  "Rocket": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3f/Eruca_vesicaria_BM010755249.jpg/500px-Eruca_vesicaria_BM010755249.jpg",
+  "Lavender": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7e/Single_lavender_flower02.jpg/500px-Single_lavender_flower02.jpg",
+  "Air Plant": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6a/Tillandsia_fasciculata.jpg/500px-Tillandsia_fasciculata.jpg",
+  "Aloe": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/Aloe_arborescens_on_Monte_Vumba_%284387600468%29.jpg/500px-Aloe_arborescens_on_Monte_Vumba_%284387600468%29.jpg",
+  "cannabis": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/79/Cannabis_sativa_Koehler_drawing.jpg/500px-Cannabis_sativa_Koehler_drawing.jpg",
+  "Boston Fern": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/30/Boston_Fern_%282873392811%29.png/500px-Boston_Fern_%282873392811%29.png"
+};
+
 const PLANTS = [
   ['Monstera Deliciosa', 'houseplant', 'Four years old with deep splits in every leaf. Needs a moss pole and a bright corner.'],
   ['Golden Pothos', 'houseplant', 'Trails about two metres off a shelf. Nearly impossible to kill, fine in a dim hallway.'],
@@ -134,7 +191,13 @@ async function ensureMembers() {
     try {
       await api('/api/plants/offer', {
         method: 'POST',
-        body: { memberId: members[i % members.length].id, name, category, description },
+        body: {
+          memberId: members[i % members.length].id,
+          name,
+          category,
+          description,
+          imageUrl: IMAGES[name] || '',
+        },
       });
       posted++;
     } catch (error) {
