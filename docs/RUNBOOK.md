@@ -83,6 +83,23 @@ The first must print a match. The second must print `0` — it looks for a
 key-shaped value after the `=`, not the variable name, which these docs mention
 many times legitimately.
 
+## Seeding the catalogue
+
+With the server running, in another terminal:
+
+```bash
+npm run seed
+```
+
+Posts 52 offer listings across 43 distinct names and all eight categories,
+through the HTTP API so each one emits a real `PLANT_OFFERED` event. If the
+catalogue has no members it registers two fictional ones first, so this works on
+a fresh clone.
+
+It refuses to run when listings already exist, since a second pass would
+duplicate them. Override with `npm run seed -- --force`, or empty the store first
+(see [Reset to empty](#reset-to-empty)). Point it elsewhere with `SEED_BASE_URL`.
+
 ## Running the tests
 
 ```bash
