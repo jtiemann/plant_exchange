@@ -1159,5 +1159,231 @@
     "timestamp": "2026-09-20T13:32:25.608Z",
     "version": 1,
     "sequenceNumber": 62
+  },
+  {
+    "id": "499146dd-a950-49a7-8d7e-77205acca605",
+    "type": "PLANT_WANTED",
+    "payload": {
+      "id": "faf773f3-5819-4193-8b56-67fb09406e85",
+      "name": "Trailing plant for a shelf",
+      "description": "Looking for something that dangles down from a high shelf and tolerates a dim room. Happy to take a cutting.",
+      "category": "houseplant",
+      "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "type": "wanted",
+      "status": "available",
+      "createdAt": "2026-09-20T16:05:38.783Z",
+      "images": []
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T16:05:38.783Z",
+    "version": 1,
+    "sequenceNumber": 63
+  },
+  {
+    "id": "b8500092-f302-4eb6-aca2-132bff1e5cca",
+    "type": "TRADE_INITIATED",
+    "payload": {
+      "id": "e03bdced-a226-48a3-8ed1-4e9bb6622913",
+      "offerId": "d00e1746-dae7-4aea-9d5c-21dfdf020dda",
+      "wantedId": "faf773f3-5819-4193-8b56-67fb09406e85",
+      "offerMemberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+      "wantedMemberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "action": "notify",
+      "score": 2,
+      "confidence": 1,
+      "status": "proposed",
+      "createdAt": "2026-09-20T16:05:39.660Z"
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T16:05:39.660Z",
+    "version": 1,
+    "sequenceNumber": 64
+  },
+  {
+    "id": "40af4dfc-d24b-492c-8743-cf983418b2a7",
+    "type": "TRADE_INITIATED",
+    "payload": {
+      "id": "733c3a24-9625-48f5-a3f2-67d59c24a09d",
+      "offerId": "ab48e46e-1b8d-47b6-a611-52246d2b0434",
+      "wantedId": "faf773f3-5819-4193-8b56-67fb09406e85",
+      "offerMemberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+      "wantedMemberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "action": "suggest",
+      "score": 0.86,
+      "confidence": 0.61,
+      "status": "proposed",
+      "createdAt": "2026-09-20T16:05:39.663Z"
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T16:05:39.663Z",
+    "version": 1,
+    "sequenceNumber": 65
+  },
+  {
+    "id": "b6453727-35e3-4688-8f94-4744d5a38771",
+    "type": "TRADE_INITIATED",
+    "payload": {
+      "id": "a7c7092b-d676-4b66-8232-efeb400315ea",
+      "offerId": "ada69178-2127-43ff-91d1-719d21ed4588",
+      "wantedId": "faf773f3-5819-4193-8b56-67fb09406e85",
+      "offerMemberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+      "wantedMemberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "action": "suggest",
+      "score": 0.66,
+      "confidence": 0.46,
+      "status": "proposed",
+      "createdAt": "2026-09-20T16:05:39.664Z"
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T16:05:39.664Z",
+    "version": 1,
+    "sequenceNumber": 66
+  },
+  {
+    "id": "e029fe3c-dd8d-4d80-83ac-e84922957b26",
+    "type": "MESSAGE_SENT",
+    "payload": {
+      "id": "c54387cd-0b1e-41d7-84d4-755d49ae3f60",
+      "fromId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+      "toIds": [
+        "704cceb2-a009-42f6-b116-2b7a7d9ce1e8"
+      ],
+      "content": "Can you meet Saturday at 10 to swap the pothos cutting for your aloe? I can bring it to the market.",
+      "tradeId": null,
+      "timestamp": "2026-09-20T16:06:08.378Z",
+      "readBy": [],
+      "urgency": 2,
+      "tradeRelated": 0.97
+    },
+    "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+    "timestamp": "2026-09-20T16:06:08.378Z",
+    "version": 1,
+    "sequenceNumber": 67
+  },
+  {
+    "id": "809cb4c5-f375-43a5-b09e-d805c211c686",
+    "type": "MESSAGE_SENT",
+    "payload": {
+      "id": "335f0c47-4bb4-416b-826f-6cc3b064f20d",
+      "fromId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+      "toIds": [
+        "704cceb2-a009-42f6-b116-2b7a7d9ce1e8"
+      ],
+      "content": "thanks for the tip about the thyme, it worked!",
+      "tradeId": null,
+      "timestamp": "2026-09-20T16:06:08.756Z",
+      "readBy": [],
+      "urgency": 0,
+      "tradeRelated": 0.02
+    },
+    "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+    "timestamp": "2026-09-20T16:06:08.756Z",
+    "version": 1,
+    "sequenceNumber": 68
+  },
+  {
+    "id": "5dd4bec8-7341-47cb-bcf6-4f52d84ec52f",
+    "type": "MESSAGE_SENT",
+    "payload": {
+      "id": "6bf4da68-3165-4dd4-82be-2a3db911a7b0",
+      "fromId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+      "toIds": [
+        "704cceb2-a009-42f6-b116-2b7a7d9ce1e8"
+      ],
+      "content": "Hi! Just joined, your garden sounds lovely. What do you grow?",
+      "tradeId": null,
+      "timestamp": "2026-09-20T16:06:09.113Z",
+      "readBy": [],
+      "urgency": 1.48,
+      "tradeRelated": 0.01
+    },
+    "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+    "timestamp": "2026-09-20T16:06:09.113Z",
+    "version": 1,
+    "sequenceNumber": 69
+  },
+  {
+    "id": "908b4a8e-5a08-4047-b402-6a445f551da3",
+    "type": "MESSAGE_SENT",
+    "payload": {
+      "id": "3c77af43-7e69-4ea2-acac-5a3248612528",
+      "fromId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+      "toIds": [
+        "704cceb2-a009-42f6-b116-2b7a7d9ce1e8"
+      ],
+      "content": "I need to cancel our trade tomorrow, sorry - can we reschedule this week?",
+      "tradeId": null,
+      "timestamp": "2026-09-20T16:06:09.455Z",
+      "readBy": [],
+      "urgency": 2,
+      "tradeRelated": 0.88
+    },
+    "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+    "timestamp": "2026-09-20T16:06:09.455Z",
+    "version": 1,
+    "sequenceNumber": 70
+  },
+  {
+    "id": "9ab587c9-bd4a-4d2b-9370-f7a407d6ef45",
+    "type": "MESSAGE_SENT",
+    "payload": {
+      "id": "a0346b34-8dbf-43ee-a5f0-a1890759192a",
+      "fromId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+      "toIds": [
+        "704cceb2-a009-42f6-b116-2b7a7d9ce1e8"
+      ],
+      "content": "Yes, happy to trade the pothos cutting for your shelf spot - when suits you?",
+      "tradeId": "e03bdced-a226-48a3-8ed1-4e9bb6622913",
+      "timestamp": "2026-09-20T16:07:36.324Z",
+      "readBy": [],
+      "urgency": 2,
+      "tradeRelated": 0.97
+    },
+    "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+    "timestamp": "2026-09-20T16:07:37.001Z",
+    "version": 1,
+    "sequenceNumber": 71
+  },
+  {
+    "id": "707e5824-5f21-412f-9397-b5d2c1e03ba0",
+    "type": "MESSAGE_SENT",
+    "payload": {
+      "id": "53b6567b-b85d-4999-a473-d9e74219c772",
+      "fromId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+      "toIds": [
+        "704cceb2-a009-42f6-b116-2b7a7d9ce1e8"
+      ],
+      "content": "Lovely weather today, the garden is finally waking up.",
+      "tradeId": null,
+      "timestamp": "2026-09-20T16:07:37.330Z",
+      "readBy": [],
+      "urgency": 0.11,
+      "tradeRelated": 0.01
+    },
+    "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+    "timestamp": "2026-09-20T16:07:37.330Z",
+    "version": 1,
+    "sequenceNumber": 72
+  },
+  {
+    "id": "66fccca9-cbb8-4963-815c-9b763b93e6fc",
+    "type": "MESSAGE_SENT",
+    "payload": {
+      "id": "ea7e2ca0-7137-4a3e-aac4-e0600341dd16",
+      "fromId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "toIds": [
+        "c551d105-1246-4706-a311-a2146f0ed7a7"
+      ],
+      "content": "i'd like the burros tail please",
+      "tradeId": null,
+      "timestamp": "2026-09-20T16:14:01.474Z",
+      "readBy": [],
+      "urgency": 1.83,
+      "tradeRelated": 0.23
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T16:14:01.474Z",
+    "version": 1,
+    "sequenceNumber": 73
   }
 ]

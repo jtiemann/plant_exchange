@@ -175,6 +175,42 @@
             margin-top: 20px;
         }
 
+        .match-card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            border-left: 4px solid #b9c4cf;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+        }
+        .match-card.notify { border-left-color: #2e9e5b; }
+        .match-pair { font-weight: 600; color: #2c3e50; }
+        .match-arrow { color: #7f8c8d; margin: 0 6px; }
+        .match-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 6px;
+            font-size: 0.82rem;
+            color: #7f8c8d;
+        }
+        .match-strength {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            padding: 2px 8px;
+            border-radius: 10px;
+            background: #eceff1;
+            color: #546e7a;
+        }
+        .match-card.notify .match-strength { background: #e3f4e9; color: #2e7d4f; }
+        .category-hint {
+            font-size: 0.8rem;
+            margin-top: 5px;
+            color: #2e7d4f;
+            min-height: 1.1em;
+        }
+        .category-hint.warn { color: #b3541e; }
+
         .plant-card {
             background: #f8f9fa;
             border-radius: 10px;
@@ -523,6 +559,7 @@
                     <div class="form-group">
                         <label for="plantDescription">Description *</label>
                         <textarea id="plantDescription" rows="3" placeholder="Describe the plant, its condition, care requirements..." required></textarea>
+                        <div class="category-hint" id="categoryHint"></div>
                     </div>
                     <button type="submit" class="btn" id="plantSubmitBtn">Offer Plant</button>
                 </form>
@@ -542,6 +579,17 @@
 
             <div class="plants-grid" id="plantsGrid">
                 <!-- Plants will be dynamically loaded here -->
+            </div>
+        </div>
+
+        <!-- Suggested Trades -->
+        <div class="panel">
+            <h2>🤝 Suggested Trades</h2>
+            <p style="color:#7f8c8d;font-size:0.86rem;margin:6px 0 14px;">
+                Offers paired with requests by meaning, not keywords. Green ones are strong enough to tell both members about.
+            </p>
+            <div id="matchesList">
+                <p style="text-align:center;color:#666;margin:24px 0;">No suggested trades yet. Add an offer or a request and they appear here.</p>
             </div>
         </div>
 
@@ -632,6 +680,7 @@
                     currentFilter: 'all',
                     currentTab: 'offer',
                     searchTerm: '',
+                    trades: [],
                     searchResults: null,   // server-ranked hits, null = use local view
                     searchPending: false,
                     selectedRecipients: new Set(),
@@ -691,6 +740,7 @@
                         this.state.members = data.data.members || [];
                         this.state.plants = data.data.plants || [];
                         this.state.messages = data.data.messages || [];
+                        this.state.trades = data.data.trades || [];
                         console.log('Initial state loaded:', {
                             members: this.state.members.length,
                             plants: this.state.plants.length,
@@ -712,9 +762,15 @@
                     case 'plants_updated':
                         this.state.plants = data.data || [];
                         this.renderPlants();
+                        this.renderMatches();
                         this.updateStats();
                         break;
                     
+                    case 'trades_updated':
+                        this.state.trades = data.data || [];
+                        this.renderMatches();
+                        break;
+
                     case 'messages_updated':
                         this.state.messages = data.data || [];
                         this.renderMessages(this.state.currentMemberId);
@@ -796,6 +852,13 @@
                     tab.addEventListener('click', () => {
                         this.setFilter(tab.dataset.filter);
                     });
+                });
+
+                // Category suggestion once the member stops typing the description
+                let categoryTimer;
+                document.getElementById('plantDescription').addEventListener('input', () => {
+                    clearTimeout(categoryTimer);
+                    categoryTimer = setTimeout(() => this.suggestCategory(), 600);
                 });
 
                 // Search box
@@ -1100,6 +1163,7 @@
             updateUI() {
                 this.updateMemberSelectors();
                 this.renderPlants();
+                this.renderMatches();
                 this.updateStats();
             }
 
@@ -1278,6 +1342,83 @@
                     `;
                     container.appendChild(plantCard);
                 });
+            }
+
+            renderMatches() {
+                const container = document.getElementById('matchesList');
+                if (!container) return;
+
+                const plantName = id => {
+                    const plant = this.state.plants.find(p => p.id === id);
+                    return plant ? plant.name : 'a removed listing';
+                };
+                const memberName = id => {
+                    const member = this.state.members.find(m => m.id === id);
+                    return member ? member.name : 'Unknown';
+                };
+
+                const trades = [...this.state.trades].sort((a, b) => b.score - a.score);
+
+                if (!trades.length) {
+                    container.innerHTML = '<p style="text-align:center;color:#666;margin:24px 0;">No suggested trades yet. Add an offer or a request and they appear here.</p>';
+                    return;
+                }
+
+                container.innerHTML = trades.map(trade => `
+                    <div class="match-card ${trade.action}">
+                        <div>
+                            <span class="match-pair">${plantName(trade.offerId)}</span>
+                            <span class="match-arrow">&harr;</span>
+                            <span class="match-pair">${plantName(trade.wantedId)}</span>
+                        </div>
+                        <div class="match-meta">
+                            <span>${memberName(trade.offerMemberId)} offers &middot; ${memberName(trade.wantedMemberId)} wants</span>
+                            <span class="match-strength">${trade.action === 'notify' ? 'strong match' : 'worth a look'}</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Asks the server to categorise the listing from its description, so
+            // the member does not have to pick from eight options. Only pre-fills
+            // when the answer is confident; a wrong guess costs one click, and
+            // the member can always override.
+            async suggestCategory() {
+                const name = document.getElementById('plantName').value.trim();
+                const description = document.getElementById('plantDescription').value.trim();
+                const hint = document.getElementById('categoryHint');
+                const select = document.getElementById('plantCategory');
+
+                if (description.length < 12) { hint.textContent = ''; return; }
+
+                try {
+                    const response = await fetch('/api/plants/classify', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name, description }),
+                    });
+                    if (!response.ok) return;
+                    const result = await response.json();
+                    if (!result.available) { hint.textContent = ''; return; }
+
+                    hint.classList.remove('warn');
+
+                    if (result.likelySpam) {
+                        hint.classList.add('warn');
+                        hint.textContent = 'This does not look like a plant listing.';
+                        return;
+                    }
+
+                    // Never overwrite a choice the member already made.
+                    if (result.suggest && !select.value) {
+                        select.value = result.category;
+                        hint.textContent = 'Category set to ' + result.category + '. Change it if that is wrong.';
+                    } else {
+                        hint.textContent = '';
+                    }
+                } catch (error) {
+                    hint.textContent = '';
+                }
             }
 
             renderMessages(memberId = null) {

@@ -1,7 +1,10 @@
 // The Plant Exchange - Event-Driven Plant Trading Platform
 // Modern architecture with RxJS, Ramda, Event Sourcing, and Reactive Streams
 
-require('dotenv').config();
+// Jest sets NODE_ENV=test. Keep the loader's "injected env" line in normal runs -
+// docs/RUNBOOK.md tells operators to look for it - but silence it under test,
+// where it prints a stack trace per suite.
+require('dotenv').config({ quiet: process.env.NODE_ENV === 'test' });
 
 const express = require('express');
 const fs = require('fs').promises;
@@ -10,7 +13,6 @@ const { v4: uuidv4 } = require('uuid');
 const R = require('ramda');
 const { Subject, BehaviorSubject, merge, fromEvent, timer } = require('rxjs');
 const { map, filter, distinctUntilChanged, shareReplay, tap } = require('rxjs/operators');
-const { TypeSafeClient, choice, noul } = require('@typesafe-ai/sdk');
 
 // =============================================================================
 // CONFIGURATION
@@ -34,76 +36,14 @@ const requireTypeSafeKey = () => {
 };
 
 // =============================================================================
-// SEMANTIC SEARCH (TypeSafe / Jev)
+// JEV-BACKED FEATURES
 // =============================================================================
+//
+// The model calls live in lib/judgments.js. What stays here is the workflow
+// around them: which records are eligible, when to call at all, and what to do
+// when the key is absent or the API fails.
 
-// A Choice question accepts at most 255 options. Past that we rank the newest
-// 255 listings; splitting into a two-pass window search is the fix when the
-// catalogue outgrows it.
-const MAX_CHOICE_OPTIONS = 255;
-
-// Tuned against the listings in events.json: irrelevant queries scored ~0.02,
-// good matches 0.89-0.96. Re-tune these as the catalogue grows.
-const EXISTS_THRESHOLD = 0.35;
-
-// Choice probabilities are competitive - they answer "which one is best", not
-// "which are relevant". Two equally good matches split ~0.55/0.45, while a
-// good-vs-irrelevant pair goes ~0.91/0.09. A floor of 0.15 of the top hit keeps
-// both halves of a genuine tie and still drops the tail.
-const RELEVANCE_FLOOR = 0.15;
-
-let typeSafeClient = null;
-const getTypeSafeClient = () => {
-  if (!typeSafeClient) {
-    typeSafeClient = new TypeSafeClient({ apiKey: requireTypeSafeKey() });
-  }
-  return typeSafeClient;
-};
-
-const substringSearch = (plants, query) => {
-  const text = query.toLowerCase();
-  return plants.filter(plant =>
-    plant.name.toLowerCase().includes(text) ||
-    plant.description.toLowerCase().includes(text) ||
-    plant.category.toLowerCase().includes(text)
-  );
-};
-
-// One Jev request answers both questions over the same state. The Choice ranks
-// every listing; the Noul says whether anything matches at all. Choice
-// probabilities always sum to 1, so without the Noul a search for "mountain
-// bike" would still return whichever plant is least irrelevant.
-const semanticSearch = async (plants, query) => {
-  const shortlist = plants.slice(0, MAX_CHOICE_OPTIONS);
-  const ids = shortlist.map((_, i) => `P${String(i).padStart(3, '0')}`);
-  const state = shortlist
-    .map((plant, i) => `${ids[i]}| ${plant.name} (${plant.category}, ${plant.type}): ${plant.description}`)
-    .join('\n');
-
-  const response = await getTypeSafeClient().systemOne({
-    state,
-    questions: {
-      where: choice(`Which listing best matches: "${query}"?`,
-        Object.fromEntries(ids.map(id => [id, null]))),
-      exists: noul(`Does any listing plausibly match: "${query}"?`, {
-        true: 'At least one listing is a plausible match for what the searcher wants',
-        false: 'No listing is relevant to this search'
-      })
-    }
-  });
-
-  if (response.answers.exists.noul < EXISTS_THRESHOLD) return [];
-
-  const probabilities = response.answers.where.probabilities;
-  const ranked = shortlist
-    .map((plant, i) => ({ ...plant, relevance: probabilities[ids[i]] || 0 }))
-    .sort((a, b) => b.relevance - a.relevance);
-
-  // Relative floor, so the cutoff holds as probability mass spreads over a
-  // larger catalogue.
-  const best = ranked.length ? ranked[0].relevance : 0;
-  return ranked.filter(plant => plant.relevance >= best * RELEVANCE_FLOOR);
-};
+const judgments = require('./lib/judgments');
 
 // The same query over an unchanged catalogue is a free repeat.
 const SEARCH_CACHE_MAX = 200;
@@ -174,6 +114,35 @@ const createMessage = (fromId, toIds, content, tradeId = null) => ({
   tradeId,
   timestamp: new Date().toISOString(),
   readBy: [] // Track who has read the message
+});
+
+// Who may be paired with whom is a rule, not a judgment: opposite sides of the
+// catalogue, different members, still available. Pure so it can be tested
+// without touching the API.
+const eligibleCounterparties = (plants, listing) => {
+  const opposite = listing.type === 'offer' ? 'wanted' : 'offer';
+  return plants.filter(other =>
+    other.type === opposite &&
+    other.memberId !== listing.memberId &&
+    other.status === 'available' &&
+    other.id !== listing.id
+  );
+};
+
+// A candidate pairing between an offer and a want, as judged by Jev. `action`
+// records which of the three things code may do with it: 'notify' means both
+// members should hear about it, 'suggest' means show it when they look.
+const createTrade = (offerId, wantedId, offerMemberId, wantedMemberId, action, score, confidence) => ({
+  id: uuidv4(),
+  offerId,
+  wantedId,
+  offerMemberId,
+  wantedMemberId,
+  action,
+  score,
+  confidence,
+  status: 'proposed',
+  createdAt: new Date().toISOString()
 });
 
 // =============================================================================
@@ -282,6 +251,27 @@ class StateProjections {
       })
     ).subscribe(this.plants$);
 
+    // Trades projection
+    events$.pipe(
+      filter(event => [EventTypes.TRADE_INITIATED, EventTypes.TRADE_COMPLETED].includes(event.type)),
+      map(event => {
+        const newTrades = new Map(this.trades$.value);
+
+        switch (event.type) {
+          case EventTypes.TRADE_INITIATED:
+            newTrades.set(event.payload.id, event.payload);
+            break;
+          case EventTypes.TRADE_COMPLETED: {
+            const trade = newTrades.get(event.payload.tradeId);
+            if (trade) newTrades.set(trade.id, { ...trade, status: 'completed' });
+            break;
+          }
+        }
+
+        return newTrades;
+      })
+    ).subscribe(this.trades$);
+
     // Messages projection
     events$.pipe(
       filter(event => [EventTypes.MESSAGE_SENT, EventTypes.MESSAGE_READ].includes(event.type)),
@@ -342,6 +332,24 @@ class StateProjections {
     const activePlants = R.omit(removedPlants, plants);
     this.plants$.next(new Map(Object.entries(activePlants)));
 
+    // Rebuild trades
+    const trades = R.pipe(
+      R.filter(event => event.type === EventTypes.TRADE_INITIATED),
+      R.map(event => [event.payload.id, event.payload]),
+      R.fromPairs
+    )(events);
+
+    const completed = R.pipe(
+      R.filter(event => event.type === EventTypes.TRADE_COMPLETED),
+      R.map(event => event.payload.tradeId)
+    )(events);
+
+    const settledTrades = R.map(
+      trade => (completed.includes(trade.id) ? { ...trade, status: 'completed' } : trade),
+      trades
+    );
+    this.trades$.next(new Map(Object.entries(settledTrades)));
+
     // Rebuild messages
     const messages = R.pipe(
       R.filter(event => event.type === EventTypes.MESSAGE_SENT),
@@ -370,6 +378,10 @@ class StateProjections {
     return this.plants$.asObservable();
   }
 
+  getTrades() {
+    return this.trades$.asObservable();
+  }
+
   getMessages() {
     return this.messages$.asObservable();
   }
@@ -378,7 +390,8 @@ class StateProjections {
     return {
       members: Array.from(this.members$.value.values()),
       plants: Array.from(this.plants$.value.values()),
-      messages: Array.from(this.messages$.value.values())
+      messages: Array.from(this.messages$.value.values()),
+      trades: Array.from(this.trades$.value.values())
     };
   }
 }
@@ -442,12 +455,39 @@ class PlantExchangeService {
       throw new Error('No recipients specified');
     }
 
+    // Two judgments over the message: whether it concerns a trade, and how much
+    // it needs a reply. Both are advisory - a failure must never block sending.
+    let triage = {};
+    if (hasTypeSafeKey()) {
+      try {
+        triage = await judgments.triageMessage(requireTypeSafeKey(), messageData.content);
+      } catch (error) {
+        console.error(`Message triage failed (${error.constructor.name}): ${error.message}`);
+      }
+    }
+
     const message = createMessage(
       messageData.fromId,
       toIds,
       messageData.content,
       messageData.tradeId
     );
+
+    if (triage.urgency !== undefined) {
+      message.urgency = triage.urgency;
+      message.tradeRelated = triage.tradeRelated;
+    }
+
+    // Only worth asking which trade once the Noul says there is one. The
+    // options are that member's open trades, so this cannot be folded into the
+    // triage request - it needs the earlier answer to know what to offer.
+    if (!message.tradeId && triage.isTradeMessage) {
+      try {
+        message.tradeId = await this.linkToTrade(messageData.content, message.fromId, toIds);
+      } catch (error) {
+        console.error(`Trade linking failed (${error.constructor.name}): ${error.message}`);
+      }
+    }
 
     const event = createEvent(EventTypes.MESSAGE_SENT, message, messageData.fromId);
     return await this.eventStore.append(event);
@@ -472,6 +512,93 @@ class PlantExchangeService {
   }
 
   // Query methods using functional composition
+  // Open trades involving any of these members, with plant names resolved so
+  // the Choice options mean something.
+  async linkToTrade(content, fromId, toIds) {
+    const people = [fromId, ...toIds];
+    const plants = this.projections.plants$.value;
+
+    const open = Array.from(this.projections.trades$.value.values())
+      .filter(trade =>
+        trade.status === 'proposed' &&
+        (people.includes(trade.offerMemberId) || people.includes(trade.wantedMemberId))
+      )
+      .map(trade => ({
+        id: trade.id,
+        offerName: (plants.get(trade.offerId) || {}).name || 'an unknown plant',
+        wantedName: (plants.get(trade.wantedId) || {}).name || 'an unknown plant',
+      }));
+
+    if (!open.length) return null;
+
+    const link = await judgments.linkMessageToTrade(requireTypeSafeKey(), content, open);
+    return link ? link.tradeId : null;
+  }
+
+  // Pairs a newly created listing against the opposite side of the catalogue.
+  // Who may trade with whom is a rule, so code builds the candidate list; only
+  // "do these two needs meet" is a judgment.
+  //
+  // Runs after the listing is already persisted, so a failure here never costs
+  // the member their listing.
+  async matchNewListing(plant) {
+    if (!hasTypeSafeKey()) return [];
+
+    const candidates = eligibleCounterparties(
+      Array.from(this.projections.plants$.value.values()),
+      plant
+    );
+
+    if (!candidates.length) return [];
+
+    let matches;
+    try {
+      matches = await judgments.matchListings(requireTypeSafeKey(), plant, candidates);
+    } catch (error) {
+      console.error(`Matching failed (${error.constructor.name}): ${error.message}`);
+      return [];
+    }
+
+    const offered = plant.type === 'offer';
+    const events = [];
+    for (const match of matches) {
+      const trade = createTrade(
+        match.offerId,
+        match.wantedId,
+        offered ? plant.memberId : match.candidate.memberId,
+        offered ? match.candidate.memberId : plant.memberId,
+        match.action,
+        match.score,
+        match.confidence
+      );
+      events.push(await this.eventStore.append(
+        createEvent(EventTypes.TRADE_INITIATED, trade, plant.memberId)
+      ));
+    }
+
+    if (events.length) {
+      console.log(`Matched "${plant.name}" against ${candidates.length} candidate(s): ` +
+        matches.map(m => `${m.candidate.name} [${m.action}]`).join(', '));
+    }
+    return events;
+  }
+
+  // Category and spam ride in one request over the same state. Code decides
+  // whether the guess is confident enough to pre-fill; the member can override.
+  async classifyListing(name, description) {
+    if (!hasTypeSafeKey()) return { available: false };
+    const result = await judgments.classifyListing(requireTypeSafeKey(), name, description);
+    return { available: true, ...result };
+  }
+
+  getMemberTrades(memberId) {
+    return R.pipe(
+      R.filter(trade => trade.offerMemberId === memberId || trade.wantedMemberId === memberId),
+      R.sortBy(R.prop('score')),
+      R.reverse
+    )(Array.from(this.projections.trades$.value.values()));
+  }
+
   // Query methods using functional composition
   async searchPlants(criteria) {
     const currentPlants = Array.from(this.projections.plants$.value.values());
@@ -488,17 +615,17 @@ class PlantExchangeService {
     )(currentPlants);
 
     if (!criteria.search) return shortlist;
-    if (!hasTypeSafeKey()) return substringSearch(shortlist, criteria.search);
+    if (!hasTypeSafeKey()) return judgments.substringSearch(shortlist, criteria.search);
 
     const key = cacheKey(criteria.search, shortlist);
     if (searchCache.has(key)) return searchCache.get(key);
 
     try {
-      return cacheSearch(key, await semanticSearch(shortlist, criteria.search));
+      return cacheSearch(key, await judgments.searchListings(requireTypeSafeKey(), shortlist, criteria.search));
     } catch (error) {
       console.error(`Semantic search failed (${error.constructor.name}): ${error.message}`);
       console.error('   Falling back to substring matching for this query.');
-      return substringSearch(shortlist, criteria.search);
+      return judgments.substringSearch(shortlist, criteria.search);
     }
   }
 
@@ -530,6 +657,8 @@ class PlantExchangeService {
     )(currentMessages);
   }
 
+  // Ranked by how much each message needs a reply, falling back to recency for
+  // messages sent before triage existed or while the key was absent.
   getUnreadMessagesForMember(memberId) {
     const currentMessages = Array.from(this.projections.messages$.value.values());
     
@@ -540,8 +669,12 @@ class PlantExchangeService {
         const readBy = message.readBy || [];
         return recipients.includes(memberId) && !readBy.includes(memberId);
       }),
-      R.sortBy(R.prop('timestamp')),
-      R.reverse
+      // Urgency first where triage ran, recency within the same band and for
+      // messages that predate it.
+      R.sortWith([
+        R.descend(message => message.urgency !== undefined ? message.urgency : -1),
+        R.descend(R.prop('timestamp'))
+      ])
     )(currentMessages);
   }
 }
@@ -597,6 +730,13 @@ class PlantExchangeServer {
       this.broadcastToSSEClients({
         type: 'plants_updated',
         data: Array.from(plants.values())
+      });
+    });
+
+    this.projections.getTrades().subscribe(trades => {
+      this.broadcastToSSEClients({
+        type: 'trades_updated',
+        data: Array.from(trades.values())
       });
     });
 
@@ -662,6 +802,8 @@ class PlantExchangeServer {
         const { memberId, ...plantData } = req.body;
         const event = await this.service.offerPlant(plantData, memberId);
         res.json({ success: true, event });
+        this.service.matchNewListing(event.payload).catch(error =>
+          console.error('Matching failed:', error.message));
       } catch (error) {
         res.status(400).json({ error: error.message });
       }
@@ -672,9 +814,27 @@ class PlantExchangeServer {
         const { memberId, ...plantData } = req.body;
         const event = await this.service.requestPlant(plantData, memberId);
         res.json({ success: true, event });
+        this.service.matchNewListing(event.payload).catch(error =>
+          console.error('Matching failed:', error.message));
       } catch (error) {
         res.status(400).json({ error: error.message });
       }
+    });
+
+    this.app.post('/api/plants/classify', async (req, res) => {
+      try {
+        const { name = '', description = '' } = req.body;
+        if (!name && !description) {
+          return res.status(400).json({ error: 'name or description required' });
+        }
+        res.json(await this.service.classifyListing(name, description));
+      } catch (error) {
+        res.status(500).json({ error: error.message });
+      }
+    });
+
+    this.app.get('/api/matches/:memberId', (req, res) => {
+      res.json(this.service.getMemberTrades(req.params.memberId));
     });
 
     this.app.get('/api/plants', async (req, res) => {
@@ -746,6 +906,7 @@ class PlantExchangeServer {
         plantsOffered: state.plants.filter(p => p.type === 'offer').length,
         plantsWanted: state.plants.filter(p => p.type === 'wanted').length,
         totalMessages: state.messages.length,
+        totalMatches: this.projections.trades$.value.size,
         totalEvents: this.eventStore.getEvents().length
       });
     });
@@ -786,7 +947,7 @@ class PlantExchangeServer {
 
 if (require.main === module) {
   const server = new PlantExchangeServer();
-  server.start().catch(console.error);
+  server.start(Number(process.env.PORT) || 3000).catch(console.error);
 }
 
 module.exports = {
@@ -799,6 +960,8 @@ module.exports = {
   createMember,
   createPlant,
   createMessage,
+  createTrade,
+  eligibleCounterparties,
   hasTypeSafeKey,
   requireTypeSafeKey
 };

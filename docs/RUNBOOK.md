@@ -9,7 +9,7 @@ Running, configuring, and troubleshooting The Plant Exchange. For how it works i
 | Start | `npm start` |
 | Dev (auto-reload) | `npm run dev` |
 | URL | http://localhost:3000 |
-| Port | 3000, **hardcoded** |
+| Port | 3000, or `PORT` |
 | Data | `./events.json` |
 | Secrets | `./.env` (gitignored) |
 | Node | 20 or newer |
@@ -47,20 +47,20 @@ In the browser, the top-right indicator should read **🟢 Connected**. If it do
 
 ## Configuration
 
-`TYPESAFE_API_KEY` is **the only environment variable the code reads.** Get one at [console.typesafe.ai](https://console.typesafe.ai).
+`TYPESAFE_API_KEY` is the key that turns on every Jev feature. Get one at [console.typesafe.ai](https://console.typesafe.ai). `PORT` overrides the listen port.
 
 Everything else is a default parameter in `server.js` and is not configurable without editing code:
 
 | Setting | Value | Location |
 | --- | --- | --- |
-| Port | 3000 | `async start(port = 3000)` |
+| Port | 3000 | `PORT` env var, else the default |
 | Event store path | `./events.json` | `constructor(filePath = './events.json')` |
 | `EXISTS_THRESHOLD` | 0.35 | [server.js:47](../server.js) |
 | `RELEVANCE_FLOOR` | 0.15 | [server.js:53](../server.js) |
 | `MAX_CHOICE_OPTIONS` | 255 | [server.js:43](../server.js) |
 | `SEARCH_CACHE_MAX` | 200 | [server.js:109](../server.js) |
 
-Older versions of the README documented `PORT`, `NODE_ENV`, and `EVENT_STORE_PATH`. **None of those are wired up.** Setting them does nothing.
+Older versions of the README also documented `NODE_ENV` and `EVENT_STORE_PATH`. Those are still **not** wired up; setting them does nothing. The event store path is resolved as `./events.json` against the process working directory, so run the server from the project root.
 
 ### Key handling rules
 
@@ -106,9 +106,15 @@ duplicate them. Override with `npm run seed -- --force`, or empty the store firs
 npm test
 ```
 
-Six cases covering the state projections. They are regression tests for a bug
-where appending an event discarded all state rebuilt from history, so a failure
-here means the live projections have diverged from the event log again.
+Twenty cases across two files. They cover the state projections, the trades
+projection, the rules deciding which listings may be paired, and the substring
+search fallback. Several are regression tests for a bug where appending an event
+discarded all state rebuilt from history, so a failure there means the live
+projections have diverged from the event log again.
+
+The judgments themselves are deliberately untested: each costs a live API call
+and returns a probability rather than a fixed answer. Verify those against the
+running app instead.
 
 ## Verifying search works
 
@@ -129,6 +135,28 @@ Expected behaviour against the seeded data:
 A `relevance` field on each result means Jev ran. **No `relevance` field means you are getting substring matching** — check the key.
 
 The bike query is the important one. If it returns a plant, the `exists` check is not working and every search will return noise.
+
+## Verifying the other Jev features
+
+Category and spam, in one request:
+
+```bash
+curl -s -X POST http://localhost:3000/api/plants/classify -H "Content-Type: application/json" -d '{"name":"","description":"trailing vine with heart shaped leaves, fine in a dim room"}'
+```
+
+Expect `category: houseplant` with high confidence and a low `spam` value.
+
+Matching runs automatically when a listing is created, in the background, so the
+POST returns before it finishes. Watch the log for a `Matched "..." against N
+candidate(s)` line, then read the results:
+
+```bash
+curl -s http://localhost:3000/api/matches/<memberId>
+```
+
+Each trade carries `action` (`suggest` or `notify`), `score` and `confidence`.
+Message triage shows up as `urgency` and `tradeRelated` on sent messages, and as
+the ordering of `/api/messages/<memberId>/unread`.
 
 ## Troubleshooting
 

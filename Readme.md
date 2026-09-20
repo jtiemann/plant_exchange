@@ -403,7 +403,7 @@ yet configurable by environment - see [docs/RUNBOOK.md](docs/RUNBOOK.md#configur
 - **Rating System**: Member reputation and feedback
 - **Payment Integration**: Paid plant exchanges via Stripe
 - **Mobile App**: React Native companion application
-- **AI Matching**: Offer/want pairing via Jev Score judgments (search already shipped; matching is next - see [Architecture](docs/ARCHITECTURE.md#planned-jev-work))
+- **AI Matching**: Offers paired with requests by meaning, using a Jev Score per candidate - see [Architecture](docs/ARCHITECTURE.md#offer-and-want-matching)
 - **Calendar Integration**: Schedule trade meetings
 - **Social Features**: Plant care communities and forums
 

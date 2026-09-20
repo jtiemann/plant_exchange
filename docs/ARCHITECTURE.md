@@ -16,11 +16,11 @@ Browser (public/index.html)
 Express routes (server.js:617)
    |
    v
-PlantExchangeService (server.js:385)     <-- commands + queries
+PlantExchangeService                     <-- commands + queries
    |                       \
-   |  append event          \  searchPlants -> Jev
+   |  append event          \  all four judgments
    v                         \
-EventStore (server.js:183)     -> api.typesafe.ai
+EventStore                     lib/judgments.js -> api.typesafe.ai
    |  events.json (append-only)
    |
    |  events$ stream
@@ -48,10 +48,10 @@ The event types are declared in `EventTypes` ([server.js:126](../server.js)):
 | `PLANT_REMOVED` | `removePlant()` | live |
 | `MESSAGE_SENT` | `sendMessage()` | live |
 | `MESSAGE_READ` | `markMessageAsRead()` | live |
-| `TRADE_INITIATED` | nothing | **declared, never emitted** |
+| `TRADE_INITIATED` | `matchNewListing()` | live |
 | `TRADE_COMPLETED` | nothing | **declared, never emitted** |
 
-The two trade events are the gap in the domain. The app is described as a trading platform, but no code pairs an offer with a want or records that a trade happened. `message.tradeId` ([server.js:169](../server.js)) exists for the same unbuilt feature and is always `null`. See [Planned Jev work](#planned-jev-work).
+Pairing is live: `matchNewListing()` runs whenever a listing is created and emits `TRADE_INITIATED` for every candidate worth surfacing. `message.tradeId` is populated by [message triage](#message-triage) when a message is about a specific trade. `TRADE_COMPLETED` is still never emitted - nothing yet marks a trade as done, which is the remaining gap in the domain.
 
 ### Consequences worth knowing
 
@@ -76,9 +76,28 @@ The same `BehaviorSubject`s feed both HTTP responses and the SSE broadcast ([ser
 
 SSE rather than WebSockets because traffic is one-directional: commands go over ordinary POSTs, and only state updates flow back.
 
-## Semantic search
+## Jev judgments
 
-The most involved part of the system, and the only place an AI model is in the loop.
+Every call to a System One model lives in [`lib/judgments.js`](../lib/judgments.js).
+That module only turns state into typed answers; `server.js` owns the workflow and
+every deterministic rule. The split exists so the whole AI surface is readable in
+one file and the rules around it stay testable without touching the API.
+
+| Judgment | Primitives | Runs when |
+| --- | --- | --- |
+| `searchListings` | Choice + Noul | a search query arrives |
+| `matchListings` | Score per candidate | a listing is created |
+| `classifyListing` | Choice + Noul | the member stops typing a description |
+| `triageMessage` | Noul + Score | a message is sent |
+| `linkMessageToTrade` | Choice | triage says a message concerns a trade |
+
+All of them degrade the same way: without a key or on an API error the feature
+quietly reverts to its pre-Jev behaviour, and nothing a member does is ever lost
+because a model call failed.
+
+### Semantic search
+
+The most involved of the five.
 
 ### The problem
 
@@ -164,19 +183,82 @@ A bounded `Map` ([server.js:109](../server.js)) keyed on query plus the shortlis
 
 The API key must not reach the browser. That single constraint forced the client filter to be removed and `/api/plants?search=` to become the only search path. The client keeps substring matching purely as the instant pass while ranked results are in flight — 350ms debounce, plus a sequence counter so a slow response cannot overwrite a newer search.
 
-## Planned Jev work
+## Offer and want matching
 
-Search is the first of four judgments the codebase is shaped for. In rough order of value:
+The feature the domain was shaped for and never had. When a listing is created,
+`matchNewListing()` builds the candidate list in code - `eligibleCounterparties()`
+keeps only the opposite side, other members, still available - and sends one
+request carrying a **Score per candidate**, all over shared state. Twenty
+candidates cost barely more than one, because the questions are independent and
+run in parallel.
 
-1. **Offer ↔ want matching.** The missing domain feature. Code generates candidate pairs, excluding same-member ones; one request carries a `Score` per open want, all over shared state. Make the Score's levels the three things code can do — ignore, suggest, notify both members — so there is no threshold to fit. A top-level result is what would finally emit `TRADE_INITIATED`.
-2. **Category pre-fill.** `category` is a required dropdown and "cannabis" is currently filed under `other`. A `Choice` over the eight categories at submit time, gated on confidence: pre-select when confident, leave blank when not. A wrong guess costs one click.
-3. **Message triage.** A `Noul` for "does this message propose, accept, or decline a trade?" populates the dead `tradeId` field; a `Score` on reply-urgency ranks notifications by substance instead of recency.
-4. **Listing quality.** A spam/non-plant `Noul` riding along in the category request — same state, one extra question, effectively free.
+The Score levels are the three things code can do with a pair, so there is no
+threshold to fit: the level **is** the action.
+
+| Level | Meaning | What code does |
+| --- | --- | --- |
+| 0 | not a match | drop it |
+| 1 | possible | emit `TRADE_INITIATED` with `action: suggest` |
+| 2 | strong | emit `TRADE_INITIATED` with `action: notify` |
+
+Observed on real listings: a want for *"something that dangles down from a high
+shelf and tolerates a dim room"* scored Golden Pothos at 2.00 (*"trails two metres
+off a shelf... fine in a dim hallway"*), Burros Tail at 0.86, and String of Pearls
+at 0.66 - demoted because it *"wants a sunny window"*, contradicting the request.
+The other 24 offers scored 0 and never reached the member.
+
+Matching runs **after** the HTTP response, so creating a listing stays fast and a
+matching failure can never cost a member their listing. The resulting trades reach
+the browser over SSE.
+
+## Category pre-fill and spam
+
+Category was a required dropdown of eight options. A **Choice** over those options
+now runs as the member stops typing the description, and a **Noul** rides along in
+the same request asking whether the listing is spam at all - one extra question on
+state already being sent, so effectively free.
+
+Code, not the model, decides whether to act: the dropdown is pre-filled only above
+`CATEGORY_CONFIDENCE`, and never overwrites a choice the member already made. A
+wrong guess costs one click.
+
+## Message triage
+
+Two judgments over every outgoing message. A **Noul** for whether it concerns a
+trade, and a **Score** for how much it needs a reply. Urgency has to be a Score:
+a Noul near 0.5 means "equally likely yes or no", not "medium urgency".
+
+Unread messages are ranked by urgency, falling back to recency for messages that
+predate triage. Measured on real messages: *"I need to cancel our trade tomorrow"*
+scored 2.00, a general question 1.48, and *"thanks, it worked!"* 0.00.
+
+When the Noul says a message is about a trade, a **second request** asks which one,
+as a Choice over that member's open trades plus an explicit none option. It is a
+second request rather than another question in the first because the options
+depend on the earlier answer. Linking below `LINK_CONFIDENCE` is declined, since
+attaching a message to the wrong trade is worse than leaving `tradeId` null.
+
+## Still unbuilt
+
+All four judgments the codebase was shaped for are live. What the domain still
+lacks is the other half of a trade:
+
+- **Nothing settles a trade.** `TRADE_COMPLETED` remains declared and never
+  emitted. A trade stays `proposed` forever; there is no way for either member to
+  accept, decline, or mark one done, so the projection only ever grows.
+- **Matches are not acted on.** A `notify` match is surfaced in the UI but nobody
+  is actually notified - there is no per-member alert, only the shared panel.
+- **`reputation` is always 0.** It is set on every member at registration and
+  never changes. Completed trades are the obvious thing to derive it from, once
+  trades can complete.
+- **Matching is one-directional in practice.** It runs when a listing is created,
+  so a listing posted before its counterpart never gets re-matched. A periodic or
+  on-demand sweep would fix it.
 
 ## Known limitations
 
 - **SSE staleness during search.** A new listing arriving while a search is displayed does not refresh the results until the user retypes. Clearing `state.searchResults` in the SSE handler fixes it but fires an API call on every broadcast, so the trade-off needs a deliberate decision.
-- **Thin test coverage.** `__tests__/projections.test.js` covers the state projections; nothing else is tested. Run with `npm test`.
+- **Thin test coverage.** 20 cases across two files cover the projections and the rules around matching. The judgments themselves are not tested - they cost a live API call and return probabilities. Run with `npm test`.
 - **No auth.** Member identity is a dropdown selection. Anyone can act as anyone.
 - **Full-file rewrite per event**, as above.
-- **Port and event store path are not configurable** by environment despite what older docs claimed. Both are default parameters in `server.js`.
+- **The event store path is not configurable** by environment; it is a default parameter resolved against the process working directory. `PORT` now works.
