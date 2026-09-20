@@ -1448,5 +1448,86 @@
     "timestamp": "2026-09-20T16:20:29.694Z",
     "version": 1,
     "sequenceNumber": 76
+  },
+  {
+    "id": "3bc81c9a-592b-4c18-ab20-45d9d9ffa469",
+    "type": "MESSAGE_SENT",
+    "payload": {
+      "id": "29535e67-e1d3-4952-a48f-65d87fab4185",
+      "fromId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "toIds": [
+        "c551d105-1246-4706-a311-a2146f0ed7a7"
+      ],
+      "content": "Hi Brigitte Rau, I saw your Golden Pothos and it looks like a good match for the Trailing plant for a shelf I'm after. Would you like to trade?",
+      "tradeId": "e03bdced-a226-48a3-8ed1-4e9bb6622913",
+      "timestamp": "2026-09-20T16:36:50.955Z",
+      "readBy": [],
+      "urgency": 1.81,
+      "tradeRelated": 0.99
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T16:36:51.599Z",
+    "version": 1,
+    "sequenceNumber": 77
+  },
+  {
+    "id": "6e03c9a1-2747-434d-b650-76d03efc7f5b",
+    "type": "MESSAGE_READ",
+    "payload": {
+      "messageId": "ea7e2ca0-7137-4a3e-aac4-e0600341dd16",
+      "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7"
+    },
+    "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+    "timestamp": "2026-09-20T16:36:57.596Z",
+    "version": 1,
+    "sequenceNumber": 78
+  },
+  {
+    "id": "408c28bf-5375-4c02-9408-64953492f345",
+    "type": "MESSAGE_READ",
+    "payload": {
+      "messageId": "aa7b2055-9c44-408f-a5d9-17e504457aeb",
+      "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7"
+    },
+    "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+    "timestamp": "2026-09-20T16:36:57.607Z",
+    "version": 1,
+    "sequenceNumber": 79
+  },
+  {
+    "id": "3b9a934a-b648-46da-94c7-7f0128c3856c",
+    "type": "MESSAGE_READ",
+    "payload": {
+      "messageId": "616703b1-09f6-4fe0-8a1b-089685a60e62",
+      "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7"
+    },
+    "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+    "timestamp": "2026-09-20T16:36:57.615Z",
+    "version": 1,
+    "sequenceNumber": 80
+  },
+  {
+    "id": "1bcd57b0-8f19-4b3b-8934-708dcde2580a",
+    "type": "MESSAGE_READ",
+    "payload": {
+      "messageId": "2c2f2486-f62c-4165-9e8a-fce78b973def",
+      "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7"
+    },
+    "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+    "timestamp": "2026-09-20T16:36:57.626Z",
+    "version": 1,
+    "sequenceNumber": 81
+  },
+  {
+    "id": "887849af-1ebd-4200-977b-5c78c9f27ab7",
+    "type": "MESSAGE_READ",
+    "payload": {
+      "messageId": "29535e67-e1d3-4952-a48f-65d87fab4185",
+      "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7"
+    },
+    "memberId": "c551d105-1246-4706-a311-a2146f0ed7a7",
+    "timestamp": "2026-09-20T16:36:57.636Z",
+    "version": 1,
+    "sequenceNumber": 82
   }
 ]
