@@ -4,3 +4,6 @@ node_modules
 .env
 .env.local
 .env.*.local
+
+# Event store backups (see docs/RUNBOOK.md)
+events.backup.*.json
