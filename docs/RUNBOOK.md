@@ -83,6 +83,16 @@ The first must print a match. The second must print `0` — it looks for a
 key-shaped value after the `=`, not the variable name, which these docs mention
 many times legitimately.
 
+## Running the tests
+
+```bash
+npm test
+```
+
+Six cases covering the state projections. They are regression tests for a bug
+where appending an event discarded all state rebuilt from history, so a failure
+here means the live projections have diverged from the event log again.
+
 ## Verifying search works
 
 ```bash

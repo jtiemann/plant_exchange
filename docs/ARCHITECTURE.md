@@ -25,7 +25,7 @@ EventStore (server.js:183)     -> api.typesafe.ai
    |
    |  events$ stream
    v
-StateProjections (server.js:236)         <-- RxJS scan over events
+StateProjections (server.js:236)         <-- derived from events$
    |  members$  plants$  messages$  (BehaviorSubjects)
    |
    +--> HTTP query responses
@@ -65,6 +65,8 @@ The two trade events are the gap in the domain. The app is described as a tradin
 `StateProjections` ([server.js:236](../server.js)) turns the event stream into queryable state. Each projection is an RxJS `scan` over `events$` feeding a `BehaviorSubject`, so every projection holds a current value that new subscribers receive immediately.
 
 State lives in `Map`s keyed by id, rebuilt functionally on each event rather than mutated. Ramda does the transformation work in the query methods.
+
+**Invariant:** each projection derives the next state from its `BehaviorSubject`'s current value, never from a private accumulator. The event stream is a plain `Subject` and does not replay history, so an independently seeded accumulator starts empty, and its first emission would overwrite everything `rebuildFromHistory()` loaded — silently discarding all past state until the next restart, and broadcasting the emptied projection to every connected browser over SSE. That was a real bug, fixed in 4101649; `__tests__/projections.test.js` guards all three projections against its return.
 
 The same `BehaviorSubject`s feed both HTTP responses and the SSE broadcast ([server.js:575](../server.js)), so a browser's live updates and its query results come from one source.
 
@@ -174,7 +176,7 @@ Search is the first of four judgments the codebase is shaped for. In rough order
 ## Known limitations
 
 - **SSE staleness during search.** A new listing arriving while a search is displayed does not refresh the results until the user retypes. Clearing `state.searchResults` in the SSE handler fixes it but fires an API call on every broadcast, so the trade-off needs a deliberate decision.
-- **No tests.** `jest` is a dependency and `npm test` is wired, but no test files exist.
+- **Thin test coverage.** `__tests__/projections.test.js` covers the state projections; nothing else is tested. Run with `npm test`.
 - **No auth.** Member identity is a dropdown selection. Anyone can act as anyone.
 - **Full-file rewrite per event**, as above.
 - **Port and event store path are not configurable** by environment despite what older docs claimed. Both are default parameters in `server.js`.
