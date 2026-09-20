@@ -1140,5 +1140,24 @@
     "timestamp": "2026-09-20T12:29:31.100Z",
     "version": 1,
     "sequenceNumber": 61
+  },
+  {
+    "id": "d318ed92-c4df-493c-96ce-7bd0879f62ff",
+    "type": "PLANT_OFFERED",
+    "payload": {
+      "id": "a551e9d9-cdca-46a4-8e85-77987b924af5",
+      "name": "Lemon Thyme",
+      "description": "Citrus-scented creeping variety, good in a sunny crack between stones.",
+      "category": "herb",
+      "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+      "type": "offer",
+      "status": "available",
+      "createdAt": "2026-09-20T13:32:25.608Z",
+      "images": []
+    },
+    "memberId": "704cceb2-a009-42f6-b116-2b7a7d9ce1e8",
+    "timestamp": "2026-09-20T13:32:25.608Z",
+    "version": 1,
+    "sequenceNumber": 62
   }
 ]

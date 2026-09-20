@@ -9,7 +9,7 @@ const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 const R = require('ramda');
 const { Subject, BehaviorSubject, merge, fromEvent, timer } = require('rxjs');
-const { map, filter, scan, distinctUntilChanged, shareReplay, tap } = require('rxjs/operators');
+const { map, filter, distinctUntilChanged, shareReplay, tap } = require('rxjs/operators');
 const { TypeSafeClient, choice, noul } = require('@typesafe-ai/sdk');
 
 // =============================================================================
@@ -244,24 +244,29 @@ class StateProjections {
     this.setupProjections();
   }
 
+  // Each projection derives the next state from the BehaviorSubject's current
+  // value rather than a private accumulator. events$ is a plain Subject and does
+  // not replay history, so an accumulator seeded independently starts empty and
+  // its first emission would overwrite whatever rebuildFromHistory() had loaded,
+  // discarding every past event until the next restart.
   setupProjections() {
     const events$ = this.eventStore.getEventStream();
 
     // Members projection
     events$.pipe(
       filter(event => event.type === EventTypes.MEMBER_REGISTERED),
-      scan((members, event) => {
-        const newMembers = new Map(members);
+      map(event => {
+        const newMembers = new Map(this.members$.value);
         newMembers.set(event.payload.id, event.payload);
         return newMembers;
-      }, new Map())
+      })
     ).subscribe(this.members$);
 
     // Plants projection
     events$.pipe(
       filter(event => [EventTypes.PLANT_OFFERED, EventTypes.PLANT_WANTED, EventTypes.PLANT_REMOVED].includes(event.type)),
-      scan((plants, event) => {
-        const newPlants = new Map(plants);
+      map(event => {
+        const newPlants = new Map(this.plants$.value);
         
         switch (event.type) {
           case EventTypes.PLANT_OFFERED:
@@ -274,14 +279,14 @@ class StateProjections {
         }
         
         return newPlants;
-      }, new Map())
+      })
     ).subscribe(this.plants$);
 
     // Messages projection
     events$.pipe(
       filter(event => [EventTypes.MESSAGE_SENT, EventTypes.MESSAGE_READ].includes(event.type)),
-      scan((messages, event) => {
-        const newMessages = new Map(messages);
+      map(event => {
+        const newMessages = new Map(this.messages$.value);
         
         switch (event.type) {
           case EventTypes.MESSAGE_SENT:
@@ -303,7 +308,7 @@ class StateProjections {
         }
         
         return newMessages;
-      }, new Map())
+      })
     ).subscribe(this.messages$);
 
     // Initialize from existing events
